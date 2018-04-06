@@ -1,0 +1,69 @@
+##
+##  https://github.com/robbert229/docker-elk-nginx
+###
+version: '2.0'
+services:
+  elasticsearch1:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.3
+    container_name: elasticsearch1
+    environment:
+      - node.name=swarmee01
+      - cluster.name=swarmee
+      - bootstrap.memory_lock=true
+      - node.master=true
+        #      - xpack.security.enabled=false 
+      - "ES_JAVA_OPTS=-Xms1900m -Xmx1900m"
+    ports:
+      - 9200:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      mem_limit: 2100m
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+
+        #  nginx1:
+        #    image: nginx:stable-alpine
+        #    container_name: nginx1
+        #    ulimits:
+        #      mem_limit: 400m
+        #    ports:
+        #      - 444:444
+        #      - 443:443
+        #    volumes:
+        #      - ./certificate.crt:/etc/nginx/ssl/certificate.crt
+        #      - ./certificate.key:/etc/nginx/ssl/certificate.key
+        #      - ./kibana.htpasswd:/etc/nginx/conf.d/kibana.htpasswd
+        #      - ./default.conf:/etc/nginx/conf.d/default.conf
+        #    networks:
+        #      - esnet
+        #    depends_on:
+        #      - elasticsearch1
+
+  kibana1:
+    image: docker.elastic.co/kibana/kibana-oss:6.2.3
+    container_name: kibana1
+    environment:
+      SERVER_NAME: swarmee
+      #      vega.enableExternalUrls: true
+      VEGA_ENABLEEXTERNALURLS: "true" 
+      ELASTICSEARCH_URL: http://elasticsearch1:9200
+      #      XPACK_SECURITY_ENABLED: "false" 
+      KIBANA_DEFAULTAPPID: "dashboard/4c1cb360-2a5b-11e8-bfcf-fd22dc5fb3d6"
+    mem_limit: 1500m
+    ports:
+      - 5601:5601
+    networks:
+      - esnet
+    depends_on:
+      - elasticsearch1
+
+volumes:
+  esdata1:
+    driver: local
+
+networks:
+  esnet:

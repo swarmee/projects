@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+
+  country-api:
+    container_name: country-api1
+    restart: always
+    build: ./country-api
+    mem_limit: 1000m 
+    command: gunicorn -w 1 -b :8000 country-api:app 
+    networks:
+      - esnet
+
+  nginx:
+    container_name: nginx
+    restart: always
+    build: ./nginx
+    mem_limit: 500m
+    ports:
+      - "80:80"
+    depends_on:
+      - country-api
+    networks:
+      - esnet
+
+networks:
+  esnet:

@@ -1,0 +1,1 @@
+curl -k -H 'Content-Type: application/x-ndjson' -XPOST 'http://localhost:443/country/country/_bulk?pretty' --data-binary @combined.json -u 

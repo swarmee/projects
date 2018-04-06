@@ -1,0 +1,113 @@
+##
+##  https://github.com/robbert229/docker-elk-nginx
+###
+version: '2.0'
+services:
+  elasticsearch1:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.1.1
+    container_name: elasticsearch1
+    environment:
+      - node.name=country01
+      - cluster.name=country
+      - bootstrap.memory_lock=true
+      - node.master=true
+      - node.ingest=false
+      - "ES_JAVA_OPTS=-Xms612m -Xmx612m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      mem_limit: 900m
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+
+  elasticsearch2:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.1.1
+    container_name: elasticsearch2
+    environment:
+      - node.name=country02
+      - cluster.name=country
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms412m -Xmx412m"
+      - node.master=false
+      - node.ingest=false
+      - "discovery.zen.ping.unicast.hosts=elasticsearch1"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      mem_limit: 500m
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+    depends_on:
+      - elasticsearch1
+
+        #  elasticsearch3:
+        #    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.1.1
+        #    container_name: elasticsearch3
+        #    environment:
+        #      - node.name=country03
+        #      - cluster.name=country
+        #      - bootstrap.memory_lock=true
+        #      - "ES_JAVA_OPTS=-Xms412m -Xmx412m"
+        #      - node.master=false
+        #      - node.ingest=false
+        #      - "discovery.zen.ping.unicast.hosts=elasticsearch1"
+        #    ulimits:
+        #      memlock:
+        #        soft: -1
+        #        hard: -1
+        #      mem_limit: 500m
+        #    volumes:
+        #      - esdata3:/usr/share/elasticsearch/data
+        #    networks:
+        #      - esnet
+        #    depends_on:
+        #      - elasticsearch1
+
+  nginx1:
+    image: nginx:stable-alpine
+    container_name: nginx1
+    ulimits:
+      mem_limit: 500m
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./certificate.crt:/etc/nginx/ssl/certificate.crt
+      - ./certificate.key:/etc/nginx/ssl/certificate.key
+      - ./kibana.htpasswd:/etc/nginx/conf.d/kibana.htpasswd
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - esnet
+    depends_on:
+      - elasticsearch1
+
+  kibana1:
+    image: docker.elastic.co/kibana/kibana-oss:6.1.1
+    container_name: kibana1
+    environment:
+      SERVER_NAME: swarmee
+      ELASTICSEARCH_URL: http://elasticsearch1:9200
+    mem_limit: 800m
+#    ports:
+#      - 5601:5601
+    networks:
+      - esnet
+    depends_on:
+      - elasticsearch1
+
+volumes:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
+    #  esdata3:
+    #    driver: local
+
+networks:
+  esnet:

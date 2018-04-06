@@ -1,0 +1,5 @@
+flask-restplus==0.10.1
+Werkzeug==0.14.1
+gunicorn>=19.7.1
+elasticsearch==6.2.0
+

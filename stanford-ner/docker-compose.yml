@@ -1,0 +1,14 @@
+version: '2.0'
+services:
+  ner:
+    build: ./build
+    container_name: ner
+    environment:
+      HEAP_SIZE: 500m
+    ports:
+             - "8081:80"
+    networks:
+      - esnet
+
+networks:
+  esnet:
