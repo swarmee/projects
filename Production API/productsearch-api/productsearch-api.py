@@ -21,7 +21,7 @@ ns = api.namespace('product', description='Simple Product API operations')
 @ns.route('/search/<searchTerms>')
 class productSearch(Resource):
     def get(self, searchTerms):
-        productSearchResponse = es.search(index="products", body="{\"query\": {\"query_string\": {\"query\": \"%s\"}}}" % searchTerms)
+        productSearchResponse = es.search(index="openaddresses-australia", body="{\"query\": {\"query_string\": {\"query\": \"%s\"}}}" % searchTerms)
         productSearchClientResponse = []
         for row in productSearchResponse["hits"]["hits"]:
           productSearchClientResponse.append(row["_source"])
@@ -30,7 +30,7 @@ class productSearch(Resource):
 @ns.route('/<productNumber>')
 class productNumber(Resource):
     def get(self, productNumber):
-        productNumberSearchResponse = es.search(index="products", body="{\"query\": {\"match\": {\"_id\": \"%s\"}}}" % productNumber)
+        productNumberSearchResponse = es.search(index="openaddresses-australia", body="{\"query\": {\"match\": {\"_id\": \"%s\"}}}" % productNumber)
         productNumberClientResponse = []
         for row in productNumberSearchResponse["hits"]["hits"]:
           productNumberClientResponse.append(row["_source"])
@@ -39,10 +39,10 @@ class productNumber(Resource):
 @ns.route('/like/<productNumber>')
 class likeProductNumber(Resource):
     def get(self, productNumber):
-        likeProductNumberSearchResponse = es.search(index="products", body="{\"query\": {\"match\": {\"_id\": \"%s\"}}}" % productNumber, filter_path=['hits.hits._source.productName'])
+        likeProductNumberSearchResponse = es.search(index="openaddresses-australia", body="{\"query\": {\"match\": {\"_id\": \"%s\"}}}" % productNumber, filter_path=['hits.hits._source.productName'])
         for row in likeProductNumberSearchResponse["hits"]["hits"]:
           likeProductNumberClientResponse = row["_source"]["productName"]
-        resp3 = es.search(index="products", body="{\"query\": { \"common\": {\"productName\": {\"query\": \"%s\",\"cutoff_frequency\": 0.1}}}}" % likeProductNumberClientResponse, filter_path=['hits.hits._source.*'])
+        resp3 = es.search(index="openaddresses-australia", body="{\"query\": { \"common\": {\"street\": {\"query\": \"%s\",\"cutoff_frequency\": 0.1}}}}" % likeProductNumberClientResponse, filter_path=['hits.hits._source.*'])
         finalResponse = []
         for row in resp3["hits"]["hits"]:
           finalResponse.append(row["_source"])
@@ -51,7 +51,7 @@ class likeProductNumber(Resource):
 @ns.route('/count')
 class productCount(Resource):
     def get(self):
-        resp = es.count(index="products", filter_path=['-took','-timed_out','-_shards'])
+        resp = es.count(index="openaddresses-australia", filter_path=['-took','-timed_out','-_shards'])
         return resp
 
 @ns.route('/health')

@@ -8,7 +8,8 @@ services:
     container_name: elasticsearch1
     ports:
       - 9200:9200
-    mem_limit: 1100m
+        #      - 9300:9300
+    mem_limit: 600m
     ulimits:
       memlock:
         soft: -1
@@ -19,6 +20,7 @@ services:
       test: ["CMD", "curl","-s" ,"-f", "http://localhost:9200/_cat/health"]
     networks:
       - esnet
+    restart: on-failure
 
   kibana1:
     image: docker.elastic.co/kibana/kibana-oss:6.2.3
@@ -29,9 +31,9 @@ services:
       VEGA_ENABLEEXTERNALURLS: "true" 
       ELASTICSEARCH_URL: http://elasticsearch1:9200
       #      KIBANA_DEFAULTAPPID: "dashboard/4c1cb360-2a5b-11e8-bfcf-fd22dc5fb3d6"
-    mem_limit: 800m
-    ports:
-      - 5601:5601
+    mem_limit: 400m
+    #    ports:
+            #      - 5601:5601
     networks:
       - esnet
     restart: always
@@ -42,8 +44,8 @@ services:
     container_name: productsearch-api1
     restart: always
     build: ./productsearch-api
-    mem_limit: 500m  
-    command: gunicorn --workers=2 -b :8080 productsearch-api:app 
+    mem_limit: 200m  
+    command: gunicorn --workers=1 -b :8080 productsearch-api:app 
     networks:
       - esnet
     depends_on:
@@ -52,10 +54,10 @@ services:
   nginx1:
     image: nginx:stable-alpine
     container_name: nginx1
-    mem_limit: 500m 
+    mem_limit: 200m 
     ports:
       - 80:80
-      - 444:444
+      - 443:443
     volumes:
       - ./nginx:/var/log/nginx/
       - ./certificate.crt:/etc/nginx/ssl/certificate.crt
@@ -72,7 +74,7 @@ services:
     build: ./my-filebeat
     container_name: filebeat1
     command: ./filebeat -e --modules nginx 
-    mem_limit: 500m
+    mem_limit: 100m
     volumes:
       - ./nginx:/var/log/nginx/
       - fbdata:/usr/share/filebeat/data/
@@ -83,13 +85,13 @@ services:
       elasticsearch1:  { condition: service_healthy }
 
   #Configure Stack container. This short lived container configures the stack once Kibana and Elasticsearch are available. More specifically, using a script it sets passwords, import dashboards, sets a default index pattern, loads templates and pipelines
-  configure_stack:
-    container_name: configure_stack
-    image: docker.elastic.co/beats/filebeat:6.2.3
-    volumes: ['./configure-stack.sh:/usr/local/bin/configure-stack.sh:ro']
-    command: ['/bin/bash', '-c', 'cat /usr/local/bin/configure-stack.sh | tr -d "\r" | bash']
-    networks: ['esnet']
-    depends_on: ['elasticsearch1','kibana1']
+  #  configure_stack:
+  #    container_name: configure_stack
+  #    image: docker.elastic.co/beats/filebeat:6.2.3
+  #    volumes: ['./configure-stack.sh:/usr/local/bin/configure-stack.sh:ro']
+  #    command: ['/bin/bash', '-c', 'cat /usr/local/bin/configure-stack.sh | tr -d "\r" | bash']
+  #    networks: ['esnet']
+  #    depends_on: ['elasticsearch1','kibana1']
 
 volumes:
   esdata1:
