@@ -18,6 +18,24 @@ services:
       - esnet
     restart: on-failure
 
+  kibana1:
+    image: docker.elastic.co/kibana/kibana-oss:6.2.3
+    container_name: kibana1
+    environment:
+      SERVER_NAME: swarmee
+      #      vega.enableExternalUrls: true
+      VEGA_ENABLEEXTERNALURLS: "true" 
+      ELASTICSEARCH_URL: http://elasticsearch1:9200
+      #      KIBANA_DEFAULTAPPID: "dashboard/4c1cb360-2a5b-11e8-bfcf-fd22dc5fb3d6"
+    mem_limit: 400m
+    #    ports:
+      - 5601:5601
+    networks:
+      - esnet
+    restart: always
+    depends_on:
+      elasticsearch1:  { condition: service_healthy }
+
   geonames-cities-api:
     container_name: geonames-cities-api1
     restart: always
@@ -41,6 +59,20 @@ services:
       - ./default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - esnet
+    depends_on:
+      elasticsearch1:  { condition: service_healthy }
+
+  filebeat1:
+    build: ./my-filebeat
+    container_name: filebeat1
+    command: ./filebeat -e --modules nginx 
+    mem_limit: 100m
+    volumes:
+      - ./nginx:/var/log/nginx/
+      - fbdata:/usr/share/filebeat/data/
+    networks:
+      - esnet
+    restart: on-failure
     depends_on:
       elasticsearch1:  { condition: service_healthy }
 

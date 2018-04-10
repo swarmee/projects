@@ -1,0 +1,5 @@
+2018/04/10 20:18:47 [error] 7#7: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.19.0.1, server: , request: "GET / HTTP/1.1", upstream: "http://172.19.0.3:8080/", host: "localhost"
+2018/04/10 20:18:48 [error] 7#7: *3 connect() failed (111: Connection refused) while connecting to upstream, client: 172.19.0.1, server: , request: "GET /favicon.ico HTTP/1.1", upstream: "http://172.19.0.3:8080/favicon.ico", host: "localhost", referrer: "http://localhost/"
+2018/04/10 20:29:16 [error] 7#7: *45 upstream prematurely closed connection while reading response header from upstream, client: 172.19.0.1, server: , request: "GET /v1/city/search/a* HTTP/1.1", upstream: "http://172.19.0.3:8080/v1/city/search/a*", host: "localhost", referrer: "http://localhost/"
+2018/04/10 20:29:54 [error] 7#7: *73 upstream timed out (110: Operation timed out) while reading response header from upstream, client: 172.19.0.1, server: , request: "GET /v1/city/search/a* HTTP/1.1", upstream: "http://172.19.0.3:8080/v1/city/search/a*", host: "localhost", referrer: "http://localhost/"
+2018/04/10 20:30:01 [alert] 1#1: worker process 7 exited on signal 9
