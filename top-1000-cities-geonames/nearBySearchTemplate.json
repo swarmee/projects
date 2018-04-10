@@ -1,0 +1,44 @@
+DELETE /nearByTemplate
+
+POST _scripts/nearByTemplate
+{
+  "script": {
+    "lang": "mustache",
+    "source": {
+      "query": {
+        "bool": {
+          "must": {
+            "geo_distance": {
+              "distance": "{{distance}}",
+              "location": {
+                "lat": "{{lat}}",
+                "lon": "{{lon}}"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+GET /_render/template
+{
+    "id": "nearByTemplate", 
+    "params": {
+        "distance": "100000km",
+        "lat": "0",
+        "lon": "0"
+    }
+}
+
+GET city/_search/template
+{
+    "id": "nearByTemplate", 
+    "params": {
+        "distance": "1000km",
+        "lat": "0",
+        "lon": "0"
+    }
+}
