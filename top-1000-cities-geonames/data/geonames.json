@@ -4,16 +4,18 @@
     "number_of_shards": 1,
     "number_of_replicas": 0,
     "index.codec": "best_compression",
-    "index.refresh_interval" : "1s"
+    "index.refresh_interval": "1s"
   },
-    "mappings": {
-      "city": {
-        "properties": {
-          "location": {
-            "type": "geo_point"
-          }
+  "mappings": {
+    "city": {
+      "properties": {
+        "completion-suggestion": {
+          "type": "completion"
+        },
+        "location": {
+          "type": "geo_point"
         }
       }
     }
   }
-
+}
