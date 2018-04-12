@@ -1,0 +1,39 @@
+DELETE /typeAheadTemplate
+
+POST _scripts/typeAhead
+{
+  "script": {
+    "lang": "mustache",
+    "source": {
+      "_source" : false,
+      "suggest": {
+        "completion-suggestion": {
+          "prefix": "{{typeAheadText}}",
+          "completion": {
+            "field": "completion-suggestion",
+            "fuzzy": {
+              "fuzziness": 1,
+              "prefix_length": 3
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+GET /_render/template
+{
+  "id": "typeAheadTemplate",
+  "params": {
+    "typeAheadText": "abc"
+  }
+}
+
+GET city/_search/template
+{
+  "id": "typeAheadTemplate",
+  "params": {
+    "typeAheadText": "abc"
+  }
+}

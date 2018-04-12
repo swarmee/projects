@@ -22,21 +22,20 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 ns = api.namespace('city', description='Simple Endpoints to Test Elastic API operations')
 
 query1 = api.model('query1', {
-    'searchterm': fields.String(default='hair', required=True, description='The country geo long'),
-    'searchTemplate': fields.String(default='productSearch', required=True, description='The country geo long'),
+    'typeAheadText': fields.String(default='abe', required=True, description='Type Ahead Text'),
+    'typeAheadTemplate': fields.String(default='typeAhead', required=True, description='Template for Type Ahead'),
     })
 
-@ns.route('/search1')
-class Test4(Resource):
+@ns.route('/typeAhead')
+class typeAhead(Resource):
     @ns.expect(query1)
     def post(self):
-        searchInput = api.payload['searchterm']
-        searchTemplate = api.payload['searchTemplate']
-        abc = {'id': searchTemplate ,'params': {'searchQuery': searchInput}}
-        resp = es.search_template(index="products", body=abc, filter_path=['-took','-timed_out','-_shards,hits.total,aggregations.*','-aggregations.*.*.hits.hits._type','-aggregations.*.*.hits.hits._index','-aggregations.*.*.hits.hits._id','-*.*.*.sum_other_doc_count','-*.*.*.doc_count_error_upper_bound','-*.*.*.*.*.sum_other_doc_count','-*.*.*.*.*.doc_count_error_upper_bound', '*.*.*.*.*.*._source'])
-        resp['content'] = resp.pop('aggregations')
-        resp['matches'] = resp.pop('hits')        
-        print(resp)
+        typeAheadText = api.payload['typeAheadText']
+        typeAheadTemplate = api.payload['typeAheadTemplate']
+        abc = {'id': typeAheadTemplate ,'params': {'typeAheadText': typeAheadText}}
+        resp = es.search_template(index="city", body=abc, filter_path=['-took','-timed_out','-hits', '-_shards'])
+##        resp['matches'] = resp.pop('hits')        
+##        print(resp)
         return jsonify(resp)
 
 #### General search of geoname data using search term
