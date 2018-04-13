@@ -13,7 +13,8 @@ POST _scripts/typeAhead
             "fuzzy": {
               "fuzziness": 0,
               "prefix_length": 3
-            }
+            },
+            "skip_duplicates": true
           }
         },
         "alternateNames-suggestion": {
@@ -23,7 +24,8 @@ POST _scripts/typeAhead
             "fuzzy": {
               "fuzziness": 0,
               "prefix_length": 3
-            }
+            },
+            "skip_duplicates": true
           }
         }        
       }

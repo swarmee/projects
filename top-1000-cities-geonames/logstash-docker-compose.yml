@@ -1,7 +1,7 @@
 version: '2.0'
 services:
   logstash:
-    image: docker.elastic.co/logstash/logstash-oss:6.1.1
+    image: docker.elastic.co/logstash/logstash-oss:6.2.3
     container_name: logstash-geonames
     environment:
       ELASTICSEARCH_HOST: test.swarmeee.net
