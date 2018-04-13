@@ -1,8 +1,7 @@
-DELETE /nearByTemplate
+DELETE /nearGeoNameId
 
-POST _scripts/nearByTemplate
-{
-  "script": {
+POST _scripts/nearGeoNameId
+{  "script": {
     "lang": "mustache",
     "source": {
       "query": {
@@ -17,15 +16,16 @@ POST _scripts/nearByTemplate
             }
           }
         }
-      }
+      }, "size" :100
     }
   }
 }
 
 
+
 GET /_render/template
 {
-    "id": "nearByTemplate", 
+    "id": "nearGeoNameId", 
     "params": {
         "distance": "100000km",
         "lat": "0",
@@ -35,7 +35,7 @@ GET /_render/template
 
 GET city/_search/template
 {
-    "id": "nearByTemplate", 
+    "id": "nearGeoNameId", 
     "params": {
         "distance": "1000km",
         "lat": "0",

@@ -9,7 +9,10 @@
   "mappings": {
     "city": {
       "properties": {
-        "completion-suggestion": {
+        "alternateNames-suggestion": {
+          "type": "completion"
+        },
+        "asciiName-suggestion": {
           "type": "completion"
         },
         "location": {

@@ -5,18 +5,27 @@ POST _scripts/typeAhead
   "script": {
     "lang": "mustache",
     "source": {
-      "_source" : false,
       "suggest": {
-        "completion-suggestion": {
+        "asciiName-suggestion": {
           "prefix": "{{typeAheadText}}",
           "completion": {
-            "field": "completion-suggestion",
+            "field": "asciiName-suggestion",
             "fuzzy": {
-              "fuzziness": 1,
+              "fuzziness": 0,
               "prefix_length": 3
             }
           }
-        }
+        },
+        "alternateNames-suggestion": {
+          "prefix": "{{typeAheadText}}",
+          "completion": {
+            "field": "alternateNames-suggestion",
+            "fuzzy": {
+              "fuzziness": 0,
+              "prefix_length": 3
+            }
+          }
+        }        
       }
     }
   }
