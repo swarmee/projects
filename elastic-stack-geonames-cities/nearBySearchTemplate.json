@@ -1,0 +1,44 @@
+DELETE /nearGeoNameId
+
+POST _scripts/nearGeoNameId
+{  "script": {
+    "lang": "mustache",
+    "source": {
+      "query": {
+        "bool": {
+          "must": {
+            "geo_distance": {
+              "distance": "{{distance}}",
+              "location": {
+                "lat": "{{lat}}",
+                "lon": "{{lon}}"
+              }
+            }
+          }
+        }
+      }, "size" :100
+    }
+  }
+}
+
+
+
+GET /_render/template
+{
+    "id": "nearGeoNameId", 
+    "params": {
+        "distance": "100000km",
+        "lat": "0",
+        "lon": "0"
+    }
+}
+
+GET city/_search/template
+{
+    "id": "nearGeoNameId", 
+    "params": {
+        "distance": "1000km",
+        "lat": "0",
+        "lon": "0"
+    }
+}

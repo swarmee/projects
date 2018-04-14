@@ -1,0 +1,50 @@
+DELETE /typeAheadTemplate
+
+POST _scripts/typeAhead
+{
+  "script": {
+    "lang": "mustache",
+    "source": {
+      "suggest": {
+        "asciiName-suggestion": {
+          "prefix": "{{typeAheadText}}",
+          "completion": {
+            "field": "asciiName-suggestion",
+            "fuzzy": {
+              "fuzziness": 0,
+              "prefix_length": 3
+            },
+            "skip_duplicates": true
+          }
+        },
+        "alternateNames-suggestion": {
+          "prefix": "{{typeAheadText}}",
+          "completion": {
+            "field": "alternateNames-suggestion",
+            "fuzzy": {
+              "fuzziness": 0,
+              "prefix_length": 3
+            },
+            "skip_duplicates": true
+          }
+        }        
+      }
+    }
+  }
+}
+
+GET /_render/template
+{
+  "id": "typeAheadTemplate",
+  "params": {
+    "typeAheadText": "abc"
+  }
+}
+
+GET city/_search/template
+{
+  "id": "typeAheadTemplate",
+  "params": {
+    "typeAheadText": "abc"
+  }
+}

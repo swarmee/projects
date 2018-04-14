@@ -1,0 +1,21 @@
+version: '2.0'
+services:
+  logstash:
+    image: docker.elastic.co/logstash/logstash-oss:6.1.0
+    container_name: logstash-geonames
+    environment:
+      ELASTICSEARCH_HOST: test.swarmee.net
+      ELASTICSEARCH_PORT: 9200
+      HEAP_SIZE: 500m
+    volumes:
+      - ./logstash-pipeline/:/usr/share/logstash/pipeline:rw
+      - ./data/:/tmp:rw
+    ports:
+             - "5000:5000"
+             - "5001:5001"
+    networks:
+      - esnet
+
+networks:
+  esnet:
+

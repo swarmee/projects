@@ -1,0 +1,23 @@
+setup.kibana:
+  host: "kibana1:5601"
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch1:9200"]
+
+#filebeat.prospectors:
+#- type: nginx
+#  paths:
+#    - /var/log/nginx/*.log
+
+#logging.level: info
+#logging.to_files: true
+logging.metrics.enabled: false
+#logging.files:
+#  path: /var/log/filebeat
+#  name: filebeat
+#  keepfiles: 1
+#  permissions: 0644
+
+
+
+

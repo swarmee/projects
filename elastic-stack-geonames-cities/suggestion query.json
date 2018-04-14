@@ -1,0 +1,15 @@
+POST http://localhost:9200/city/_search
+{
+  "suggest": {
+    "completion-suggestion": {
+      "prefix": "Sankt Marein bei",
+      "completion": {
+        "field": "completion-suggestion",
+        "fuzzy": {
+          "fuzziness": 1,
+          "prefix_length": 3
+        }
+      }
+    }
+  }
+}

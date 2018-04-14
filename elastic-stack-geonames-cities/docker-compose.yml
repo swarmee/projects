@@ -1,0 +1,79 @@
+version: '2.1'
+services:
+  elasticsearch1:
+    build: ./my-elasticsearch
+    container_name: elasticsearch1
+    ports:
+      - 9200:9200
+    mem_limit: 1000m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "curl","-s" ,"-f", "http://localhost:9200/_cat/health"]
+    networks:
+      - esnet
+    restart: on-failure
+
+  geonames-cities-api:
+    container_name: geonames-cities-api1
+    restart: always
+    build: ./geonames-cities-api
+    mem_limit: 200m  
+    command: gunicorn --workers=1 -b :8080 geonames-cities-api:app 
+    networks:
+      - esnet
+    depends_on:
+      elasticsearch1:  { condition: service_healthy }
+
+  nginx1:
+    image: nginx:stable-alpine
+    container_name: nginx1
+    mem_limit: 200m 
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx:/var/log/nginx/
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - esnet
+    depends_on:
+      elasticsearch1:  { condition: service_healthy }
+
+  configure_stack:
+    container_name: configure_stack
+    image: docker.elastic.co/beats/filebeat:6.2.3
+    mem_limit: 200m  
+    volumes: ['./my-alpine/configure-stack.sh:/usr/local/bin/configure-stack.sh:ro']
+    command: ['/bin/bash', '-c', 'cat /usr/local/bin/configure-stack.sh | tr -d "\r" | bash']
+    networks: 
+      - esnet
+    depends_on: 
+      - elasticsearch1
+  
+  logstash1:
+    image: docker.elastic.co/logstash/logstash-oss:6.1.0
+    container_name: logstash1
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch1
+      ELASTICSEARCH_PORT: 9200
+      HEAP_SIZE: 500m
+    volumes:
+      - ./logstash-pipeline/:/usr/share/logstash/pipeline:rw
+      - ./data/:/tmp:rw
+    depends_on:
+      - elasticsearch1
+      - configure_stack
+    networks:
+      - esnet
+
+
+volumes:
+  esdata1:
+    driver: local
+
+networks:
+  esnet:
