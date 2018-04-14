@@ -21,53 +21,36 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 
 ns = api.namespace('city', description='Simple Endpoints to Test Elastic API operations')
 
-typeAheadParser = ns.parser()
-typeAheadParser.add_argument('typeAheadText', type=str, help='Type Ahead Text', location='form')
-typeAheadParser.add_argument('typeAheadTemplate', type=str, help='Template for Type Ahead', location='form')
+query1 = api.model('query1', {
+    'typeAheadText': fields.String(default='Syd', required=True, description='Type Ahead Text'),
+    'typeAheadTemplate': fields.String(default='typeAhead', required=True, description='Template for Type Ahead'),
+    })
 
-nearGeoNameIdParser = ns.parser()
-nearGeoNameIdParser.add_argument('nearGeoNameId', type=str, help='Search For Cities Near This GeoNameId', location='form')
-nearGeoNameIdParser.add_argument('nearGeoNameIdDistance', type=str, help='Distance From City to Include in results', location='form')
-
-
-#### finds records near specific geo point - based on supplied distance ####
-
-@ns.route('/search/NearGeoNameId')
-class nearGeonameId(Resource):
-    @ns.doc(parser=nearGeoNameIdParser)    
-    def post(self):
-        args = nearGeoNameIdParser.parse_args()
-        nearGeoNameId = args['nearGeoNameId']
-        nearGeoNameIdDistance = args['nearGeoNameIdDistance']
-        nearGeonameIdSearchResponse = es.search(index="city", body="{\"query\": {\"match\": {\"_id\": \"%s\"}}}" % nearGeoNameId, filter_path=['hits.hits._source.location.*'])
-        for row in nearGeonameIdSearchResponse["hits"]["hits"]:
-          getLatLon = row["_source"]["location"]
-        lon = getLatLon['lon']
-        lat = getLatLon['lat']
-        abc = {'id': 'nearGeoNameId' ,'params': {'lon': lon, 'lat': lat, 'distance' : nearGeoNameIdDistance }}
-        resp3 = es.search_template(index="city", body=abc, filter_path=['hits.total', 'hits.hits._source.asciiName', 'hits.hits._source.location', 'hits.hits._source.geonameId'])
-        return jsonify(resp3)       
+query2 = api.model('query2', {
+    'nearGeoNameId': fields.String(default='2293507', required=True, description='Search For Cities Near This GeoNameId'),
+    'nearGeoNameIdDistance': fields.String(default='100km', required=True, description='Distance From City to Include in results')   
+    })
 
 @ns.route('/typeAhead')
 class typeAhead(Resource):
-    @ns.doc(parser=typeAheadParser)
+    @ns.expect(query1)
     def post(self):
-        args = typeAheadParser.parse_args()
-        typeAheadText = args['typeAheadText']
-        typeAheadTemplate = args['typeAheadTemplate']
+        typeAheadText = api.payload['typeAheadText']
+        typeAheadTemplate = api.payload['typeAheadTemplate']
         abc = {'id': typeAheadTemplate ,'params': {'typeAheadText': typeAheadText}}
         resp = es.search_template(index="city", body=abc, filter_path=['suggest.*suggestion.options.text','suggest.*suggestion.options._id'])
-        return jsonify(resp) 
+        return jsonify(resp)  
 
 @ns.route('/typeAhead/Full')
 class typeAheadFull(Resource):
-    @ns.doc(parser=typeAheadParser)
+    @ns.expect(query1)
     def post(self):
-        args = typeAheadParser.parse_args()
-        typeAheadText = args['typeAheadText']
-        typeAheadTemplate = args['typeAheadTemplate']
+        typeAheadText = api.payload['typeAheadText']
+        typeAheadTemplate = api.payload['typeAheadTemplate']
         abc = {'id': typeAheadTemplate ,'params': {'typeAheadText': typeAheadText}}
         resp = es.search_template(index="city", body=abc)
+##        resp['matches'] = resp.pop('hits')        
+##        print(resp)
         return jsonify(resp)
 
 #### General search of geoname data using search term
@@ -85,6 +68,28 @@ class geonameIdSearch(Resource):
     def get(self, geonameId):
         geonameIdSearchResponse = es.search(index="city", body="{\"query\": {\"match\": {\"_id\": \"%s\"}}}" % geonameId)
         return jsonify(geonameIdSearchResponse)       
+
+
+#### finds records near specific geo point - based on supplied distance ####
+
+@ns.route('/search/NearGeoNameId')
+class nearGeonameId(Resource):
+    @ns.expect(query2)
+    def post(self):
+        nearGeoNameId = api.payload['nearGeoNameId']
+        nearGeoNameIdDistance = api.payload['nearGeoNameIdDistance']
+        nearGeonameIdSearchResponse = es.search(index="city", body="{\"query\": {\"match\": {\"_id\": \"%s\"}}}" % nearGeoNameId, filter_path=['hits.hits._source.location.*'])
+        for row in nearGeonameIdSearchResponse["hits"]["hits"]:
+          getLatLon = row["_source"]["location"]
+        lon = getLatLon['lon']
+        lat = getLatLon['lat']
+        abc = {'id': 'nearGeoNameId' ,'params': {'lon': lon, 'lat': lat, 'distance' : nearGeoNameIdDistance }}
+        resp3 = es.search_template(index="city", body=abc, filter_path=['hits.total', 'hits.hits._source.asciiName', 'hits.hits._source.location', 'hits.hits._source.geonameId'])
+#        finalResponse = []
+#        for row in resp3["hits"]["hits"]:
+#          finalResponse.append(row["_source"])
+        return jsonify(resp3)       
+
 
 #### counts the number of city records stored in elastic ####
 @ns.route('/count')

@@ -25,6 +25,7 @@ typeAheadParser = ns.parser()
 typeAheadParser.add_argument('typeAheadText', type=str, help='Type Ahead Text', location='form')
 typeAheadParser.add_argument('typeAheadTemplate', type=str, help='Template for Type Ahead', location='form')
 
+
 nearGeoNameIdParser = ns.parser()
 nearGeoNameIdParser.add_argument('nearGeoNameId', type=str, help='Search For Cities Near This GeoNameId', location='form')
 nearGeoNameIdParser.add_argument('nearGeoNameIdDistance', type=str, help='Distance From City to Include in results', location='form')
@@ -36,7 +37,7 @@ nearGeoNameIdParser.add_argument('nearGeoNameIdDistance', type=str, help='Distan
 class nearGeonameId(Resource):
     @ns.doc(parser=nearGeoNameIdParser)    
     def post(self):
-        args = nearGeoNameIdParser.parse_args()
+        args = typeAheadParser.parse_args()
         nearGeoNameId = args['nearGeoNameId']
         nearGeoNameIdDistance = args['nearGeoNameIdDistance']
         nearGeonameIdSearchResponse = es.search(index="city", body="{\"query\": {\"match\": {\"_id\": \"%s\"}}}" % nearGeoNameId, filter_path=['hits.hits._source.location.*'])
