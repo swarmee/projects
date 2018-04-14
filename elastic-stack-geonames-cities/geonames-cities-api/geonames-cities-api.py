@@ -70,6 +70,30 @@ class typeAheadFull(Resource):
         resp = es.search_template(index="city", body=abc)
         return jsonify(resp)
 
+
+#### Simple TypeAhead Get
+
+@ns.route('/simpleTypeAhead/<typeAheadText>')
+class simpleTypeAhead(Resource):
+    def get(self, typeAheadText):
+        simpleTypeAhead = es.search_template(index="city", 
+                                             filter_path=['suggest.*suggestion.options.text','suggest.*suggestion.options._id'],
+                                             body="{\"id\": \"typeAhead\" ,\"params\": {\"typeAheadText\": \"%s\"}}" % typeAheadText )
+        return jsonify(simpleTypeAhead) 
+
+#### Simple near Geo location search
+@ns.route('/simpleSearch/NearGeoNameId/<nearGeoNameId>/<nearGeoNameIdDistance>')
+class simpleNearGeonameId(Resource):  
+    def post(self,nearGeoNameId,nearGeoNameIdDistance):
+        nearGeonameIdSearchResponse = es.search(index="city", body="{\"query\": {\"match\": {\"_id\": \"%s\"}}}" % nearGeoNameId, filter_path=['hits.hits._source.location.*'])
+        for row in nearGeonameIdSearchResponse["hits"]["hits"]:
+          getLatLon = row["_source"]["location"]
+        lon = getLatLon['lon']
+        lat = getLatLon['lat']
+        abc = {'id': 'nearGeoNameId' ,'params': {'lon': lon, 'lat': lat, 'distance' : nearGeoNameIdDistance }}
+        resp3 = es.search_template(index="city", body=abc, filter_path=['hits.total', 'hits.hits._source.asciiName', 'hits.hits._source.location', 'hits.hits._source.geonameId'])
+        return jsonify(resp3)       
+
 #### General search of geoname data using search term
 
 @ns.route('/search/<searchTerms>')
