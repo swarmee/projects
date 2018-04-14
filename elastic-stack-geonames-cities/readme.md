@@ -25,9 +25,9 @@ So you have an existing elasticsearch cluster, how do you load up this data and 
 
 1. Update the elasticsearch host and port variables in the standalone ```standalone-logstash-docker-compose.yml``` file. I.e. change the below variables to what every you want them to be. 
 
-    environment:
-      ELASTICSEARCH_HOST: elasticsearch1
-      ELASTICSEARCH_PORT: 9200
+ELASTICSEARCH_HOST: elasticsearch1
+
+ELASTICSEARCH_PORT: 9200
 
 2. Then run the standalone logstash docker compose file. This should push all the data into your cluster. 
 
