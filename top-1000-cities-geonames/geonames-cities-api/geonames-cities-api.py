@@ -8,17 +8,6 @@ import json
 es_host = {"host": "elasticsearch1", "port": 9200}
 es = Elasticsearch([es_host], retry_on_timeout=True, maxsize=25)
 
-### ADD Near GeoName Id Template
-#nearGeoNameIdTemplateBody = {  "script": { "lang": "mustache","source": {  "query": { "bool": {    "must": { "geo_distance": {  "distance": "{{distance}}",  "location": {   "lat": "{{lat}}",   "lon": "{{lon}}"}  }   } }  }, "size" :100 } }}
-#addNearGeoNameIdTemplate = client.put_template(id='nearGeoNameId', body=nearGeoNameIdTemplateBody)
-#elasticsearch.put_template(id='nearGeoNameId', body=nearGeoNameIdTemplateBody)
-#print(addNearGeoNameIdTemplate)
-
-### ADD Type Ahead Template
-#typeAheadTemplateBody = ({ "script": { "lang": "mustache", "source": { "suggest": { "asciiName-suggestion": { "prefix": "{{typeAheadText}}", "completion": { "field": "asciiName-suggestion", "fuzzy": { "fuzziness": 0, "prefix_length": 3 }, "skip_duplicates": true } }, "alternateNames-suggestion": { "prefix": "{{typeAheadText}}", "completion": { "field": "alternateNames-suggestion", "fuzzy": { "fuzziness": 0, "prefix_length": 3 }, "skip_duplicates": true } } } } } })
-#addTypeAheadTemplate = es.put_template(id='typeAhead', body=typeAheadTemplateBody)
-#print(addTypeAheadTemplate)
-
 app = Flask(__name__)
 api = Api(app,
 	      version='1.0', 

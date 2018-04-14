@@ -55,14 +55,14 @@ services:
       - elasticsearch1
   
   logstash1:
-    image: docker.elastic.co/logstash/logstash-oss:6.2.3
+    image: docker.elastic.co/logstash/logstash-oss:6.1.0
     container_name: logstash1
     environment:
-      ELASTICSEARCH_HOST: test.swarmeee.net
+      ELASTICSEARCH_HOST: elasticsearch1
       ELASTICSEARCH_PORT: 9200
       HEAP_SIZE: 500m
     volumes:
-      - ./pipeline/:/usr/share/logstash/pipeline:rw
+      - ./logstash-pipeline/:/usr/share/logstash/pipeline:rw
       - ./data/:/tmp:rw
     depends_on:
       - elasticsearch1
