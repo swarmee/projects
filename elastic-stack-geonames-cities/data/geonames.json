@@ -1,24 +1,55 @@
 {
   "template": "city",
+  "order": 1,
   "settings": {
     "number_of_shards": 1,
     "number_of_replicas": 0,
     "index.codec": "best_compression",
+    "max_result_window": 15000,
+    "index.mapping.total_fields.limit": 1000,
     "index.refresh_interval": "1s"
   },
   "mappings": {
-    "city": {
-      "properties": {
-        "alternateNames-suggestion": {
-          "type": "completion"
+    "_deafault_": {
+      "_meta": {
+        "whateveryoulike": "stuff"
+      },
+      "dynamic_templates": [
+        {
+          "text_fields": {
+            "match_pattern": "regex",
+            "path_match": "*name|*type",
+            "mapping": {
+              "type": "text",
+              "norms": false,
+              "fields": {
+                "keyword": {
+                  "type": "keywords",
+                  "norms": false
+                }
+              }
+            }
+          }
         },
-        "asciiName-suggestion": {
-          "type": "completion"
+        {
+          "suggestion_fields": {
+            "match_pattern": "regex",
+            "path_match": "*completion",
+            "mapping": {
+              "type": "completion"
+            }
+          }
         },
-        "location": {
-          "type": "geo_point"
+        {
+          "suggestion_fields": {
+            "match_pattern": "regex",
+            "path_match": "location",
+            "mapping": {
+              "type": "geo_point"
+            }
+          }
         }
-      }
+      ]
     }
   }
 }
