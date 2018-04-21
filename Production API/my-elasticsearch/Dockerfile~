@@ -1,6 +1,0 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.3
-
-COPY ./elasticsearch.yml /usr/share/elasticsearch/elasticsearch.yml
-
-RUN bin/elasticsearch-plugin install ingest-geoip
-RUN bin/elasticsearch-plugin install ingest-user-agent
