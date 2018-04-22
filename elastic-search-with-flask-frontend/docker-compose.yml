@@ -1,0 +1,124 @@
+##
+##  https://github.com/robbert229/docker-elk-nginx
+###
+version: '2.1'
+services:
+  elasticsearch1:
+    build: ./my-elasticsearch
+    container_name: elasticsearch1
+    ports:
+      - 9200:9200
+    mem_limit: 1000m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+      - ./logs/elasticsearch:/usr/share/elasticsearch/logs/      
+    healthcheck:
+      test: ["CMD", "curl","-s" ,"-f", "http://localhost:9200/_cat/health"]
+    networks:
+      - esnet
+    restart: on-failure
+
+  kibana1:
+    image: docker.elastic.co/kibana/kibana-oss:6.2.4
+    container_name: kibana1
+    environment:
+      SERVER_NAME: swarmee
+      VEGA_ENABLEEXTERNALURLS: "true" 
+      ELASTICSEARCH_URL: http://elasticsearch1:9200
+    mem_limit: 400m
+    ports:
+      - 5601:5601
+    networks:
+      - esnet
+    restart: always
+    depends_on:
+      elasticsearch1:  { condition: service_healthy }
+
+  python-app:
+    container_name: python-app1
+    restart: always
+    build: ./python-app
+    mem_limit: 200m  
+    command: gunicorn --workers=1 -b :8080 python-app:app 
+    networks:
+      - esnet
+    depends_on:
+      elasticsearch1:  { condition: service_healthy }
+
+  nginx1:
+    image: nginx:stable-alpine
+    container_name: nginx1
+    mem_limit: 200m 
+    ports:
+      - 80:80
+      - 81:81
+    volumes:
+      - ./logs/nginx:/var/log/nginx/
+#      - ./security/certificate.crt:/etc/nginx/ssl/certificate.crt
+#      - ./security/certificate.key:/etc/nginx/ssl/certificate.key
+#      - ./security/app.htpasswd:/etc/nginx/conf.d/app.htpasswd
+#      - ./security/kibana.htpasswd:/etc/nginx/conf.d/kibana.htpasswd
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - esnet
+    depends_on:
+      elasticsearch1:  { condition: service_healthy }
+
+  filebeat1:
+    build: ./my-filebeat
+    container_name: filebeat1
+    command: ./filebeat -e --modules nginx 
+    mem_limit: 100m
+    volumes:
+      - ./logs/nginx:/var/log/nginx/
+      - fbdata:/usr/share/filebeat/data/
+    networks:
+      - esnet
+    restart: on-failure
+    depends_on:
+      elasticsearch1:  { condition: service_healthy }
+
+  configure_stack:
+    container_name: configure_stack
+    build: ./my-metricbeats
+    mem_limit: 200m
+    volumes:
+      - ./configure-stack.sh:/usr/local/bin/configure-stack.sh:ro
+      - /tmp:/tmp:rw
+    command: ['/bin/bash', '-c', 'cat /usr/local/bin/configure-stack.sh | tr -d "\r" | bash']
+    networks: 
+      - esnet
+    depends_on: 
+      - elasticsearch1
+
+  logstash1:
+    image: docker.elastic.co/logstash/logstash-oss:6.2.4
+    container_name: logstash1
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch1
+      ELASTICSEARCH_PORT: 9200
+      HEAP_SIZE: 200m
+    volumes:
+      - ./my-logstash-pipeline/:/usr/share/logstash/pipeline:rw
+      - /tmp/openaddress/data/:/tmp/data/:rw
+      - ./my-logstash-mapping/:/tmp/openaddress/my-logstash-mapping:rw
+    depends_on:
+      - elasticsearch1
+      - configure_stack
+      - filebeat1
+      - nginx1
+    networks:
+      - esnet      
+
+volumes:
+  esdata1:
+    driver: local
+  fbdata:
+    driver: local
+
+networks:
+  esnet:
