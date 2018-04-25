@@ -1,0 +1,7 @@
+flask-restplus==0.10.1
+Werkzeug==0.14.1
+gunicorn>=19.7.1
+postal==1.1.7
+probableparsing==0.0.1
+probablepeople==0.5.4
+
