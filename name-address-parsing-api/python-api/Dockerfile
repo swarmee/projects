@@ -11,7 +11,7 @@ RUN ./bootstrap.sh
 RUN ./configure --datadir=/tmp
 RUN make
 RUN make install
-
+RUN ldconfig
 RUN mkdir -p /home/project/python-api
 WORKDIR /home/project/python-api
 COPY requirements.txt /home/project/python-api
