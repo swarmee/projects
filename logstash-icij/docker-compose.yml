@@ -1,20 +1,47 @@
-version: '2.0'
+version: '2.1'
 services:
-  logstash:
-    build: ./my-logstash
-    container_name: logstash1
-    environment:
-      ELASTICSEARCH_HOST: swarmee.net
-      ELASTICSEARCH_PORT: 9200
-      HEAP_SIZE: 500m
-    volumes:
-      - ./pipeline/:/usr/share/logstash/pipeline:rw
-      - ./data/:/tmp:rw
+#  logstash:
+#    build: ./my-logstash
+#    container_name: logstash1
+#    environment:
+#      ELASTICSEARCH_HOST: swarmee.net
+#      ELASTICSEARCH_PORT: 9200
+#      HEAP_SIZE: 300m
+#    mem_limit: 500m  
+#    volumes:
+#      - ./pipeline/:/usr/share/logstash/pipeline:rw
+#      - ./data/:/tmp:rw
+#    ports:
+#             - "5000:5000"
+#             - "5001:5001"
+#    networks:
+#      - esnet
+#    depends_on: 
+#      - name-address-python-api
+
+  name-address-python-api:
+    container_name: name-address-python-api1
+    restart: always
+    build: ./name-address-python-api
+    mem_limit: 2000m  
     ports:
-             - "5000:5000"
-             - "5001:5001"
+      - 80:8080
+    command: gunicorn --workers=2 -b :8080 python-api:app 
     networks:
       - esnet
+
+#  nginx1:
+#    image: nginx:stable-alpine
+#    container_name: nginx1
+#    mem_limit: 400m 
+#    ports:
+#      - 80:80
+#    volumes:
+#      - ./default.conf:/etc/nginx/conf.d/default.conf
+#    networks:
+#      - esnet
+#    depends_on: 
+#      - name-address-python-api
 
 networks:
   esnet:

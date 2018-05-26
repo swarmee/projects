@@ -7,7 +7,7 @@ services:
     container_name: python-api1
     restart: always
     build: ./python-api
-    mem_limit: 1000m  
+    mem_limit: 3000m  
     command: gunicorn --workers=1 -b :8080 python-api:app 
     networks:
       - apinet
