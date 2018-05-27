@@ -1,8 +1,10 @@
 from flask_restplus import Api, Resource, fields
 from werkzeug.contrib.fixers import ProxyFix
-from flask import Flask, url_for, jsonify
+from flask import Flask, url_for, jsonify, request
 from elasticsearch import Elasticsearch
 import json
+#import logging
+#from logging.handlers import RotatingFileHandler
 
 
 ### Setup elastic search connection
@@ -34,12 +36,18 @@ class basicsearch(Resource):
     def post(self):
         args = basicCityQuery.parse_args()
         searchText = args['searchText']
+#        app.logger.info(searchText)
+#        print(request.headers)
+#        res = es.index(index="log", doc_type='_doc',  body={'searchText' : searchText})
+#        test = request.headers['content-length']
+#        res = es.index(index="log", doc_type='_doc',  body={'contentLength' : test , 'searchText' : searchText})
         inputQuery = {'query': { 'query_string' : {'query' :  searchText }}}
         interimResponse = es.search(index="city", body=inputQuery)
         finalResponse = []
         for row in interimResponse["hits"]["hits"]:
           finalResponse.append(row["_source"])
-        return jsonify(finalResponse)       
+        return jsonify(finalResponse)   
+        
 
 ##### Count of Countries
 @ns.route('/count')
@@ -61,4 +69,7 @@ class twoCharacterCode(Resource):
 
 
 if __name__ == '__main__':
+#    handler = RotatingFileHandler('/tmp/foo.log', maxBytes=10000, backupCount=1)
+#    handler.setLevel(logging.INFO)
+#    app.logger.addHandler(handler)
     app.run(debug=False)

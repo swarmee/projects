@@ -1,0 +1,2 @@
+A warning occurred (42 apples)
+An error occurred

@@ -1,4 +1,4 @@
-version: '2.0'
+version: '2.1'
 services:
   logstash:
     build: ./my-logstash
@@ -6,7 +6,7 @@ services:
     environment:
       ELASTICSEARCH_HOST: elasticsearch
       ELASTICSEARCH_PORT: 9200
-      HEAP_SIZE: 500m
+      HEAP_SIZE: 300m
     networks:
       - esnet
     volumes:
@@ -33,12 +33,24 @@ services:
     networks:
       - esnet
  
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:6.2.4
+    environment:
+      SERVER_NAME: swarmee
+      VEGA_ENABLEEXTERNALURLS: "true" 
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    mem_limit: 400m
+    networks:
+      - esnet
+    restart: always
+
   nginx:
     build: ./my-nginx
     mem_limit: 200m 
     ports:
       - 80:80
       - 9200:9200
+      - 5601:5601      
     volumes:
       - ./logs/nginx:/var/log/nginx/
       - ./security/certificate.crt:/etc/nginx/ssl/certificate.crt
@@ -54,16 +66,31 @@ services:
     mem_limit: 200m
     networks: 
       - esnet
-#    depends_on: 
-#      - elasticsearch
+    depends_on: 
+      - elasticsearch
     volumes:
       - addressdata:/tmp/geonames/
+
+  filebeat:
+    build: ./my-filebeat
+    command: ./filebeat -e --modules=nginx --setup 
+    mem_limit: 100m
+    volumes:
+      - ./logs/nginx:/var/log/nginx/
+      - fbdata:/usr/share/filebeat/data/
+    networks:
+      - esnet
+    restart: on-failure
+  
+
 
 volumes:
   esdata1:
     driver: local
   addressdata:
     driver: local
+  fbdata:
+    driver: local    
 
 networks:
   esnet:
