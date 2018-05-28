@@ -1,11 +1,8 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.4
+FROM docker.elastic.co/kibana/kibana-oss:6.2.4
 
-COPY ./elasticsearch.yml /usr/share/elasticsearch/config/elasticsearch.yml
+COPY ./kibana.yml /usr/share/kibana/config/kibana.yml
 
-COPY ./jvm.options /usr/share/elasticsearch/config/jvm.options
+USER root
+RUN mkdir -p /var/log/kibana && chmod 777 /var/log/kibana
+USER kibana
 
-COPY ./log4j2.properties /usr/share/elasticsearch/config/log4j2.properties
-
-#RUN bin/elasticsearch-plugin install ingest-geoip
-
-#RUN bin/elasticsearch-plugin install ingest-user-agent

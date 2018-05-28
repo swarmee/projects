@@ -7,7 +7,7 @@ output.elasticsearch:
 #filebeat.prospectors:
 #- type: nginx
 #  paths:
-#    - /var/log/nginx/*.log
+#    - /applogs/*.log
 
 #logging.level: info
 #logging.to_files: true

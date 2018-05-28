@@ -11,6 +11,12 @@ services:
       - esnet
     volumes:
       - addressdata:/tmp/geonames/
+    depends_on: 
+      - elasticsearch
+      - python-app
+      - kibana
+      - nginx
+      - filebeat
 
   python-app:
     restart: always
@@ -19,6 +25,9 @@ services:
     command: gunicorn --workers=1 -b :8080 python-app:app 
     networks:
       - esnet
+    depends_on: 
+      - elasticsearch
+
 
   elasticsearch:
     build: ./my-elasticsearch
@@ -34,31 +43,34 @@ services:
       - esnet
  
   kibana:
-    image: docker.elastic.co/kibana/kibana-oss:6.2.4
-    environment:
-      SERVER_NAME: swarmee
-      VEGA_ENABLEEXTERNALURLS: "true" 
-      ELASTICSEARCH_URL: http://elasticsearch:9200
+    build: ./my-kibana
     mem_limit: 400m
     networks:
       - esnet
     restart: always
+    depends_on: 
+      - nginx
+
 
   nginx:
     build: ./my-nginx
     mem_limit: 200m 
     ports:
       - 80:80
+      - 443:443      
       - 9200:9200
       - 5601:5601      
     volumes:
-      - ./logs/nginx:/var/log/nginx/
-      - ./security/certificate.crt:/etc/nginx/ssl/certificate.crt
-      - ./security/certificate.key:/etc/nginx/ssl/certificate.key
-      - ./security/app.htpasswd:/etc/nginx/conf.d/app.htpasswd
-      - ./security/kibana.htpasswd:/etc/nginx/conf.d/kibana.htpasswd
+      - nginxdata:/var/log/nginx/
+#      - ./security/certificate.crt:/etc/nginx/ssl/certificate.crt
+#      - ./security/certificate.key:/etc/nginx/ssl/certificate.key
+#      - ./security/app.htpasswd:/etc/nginx/conf.d/app.htpasswd
+#      - ./security/kibana.htpasswd:/etc/nginx/conf.d/kibana.htpasswd
     networks:
       - esnet
+    depends_on: 
+      - elasticsearch
+
 
   download_data:
     container_name: download_data
@@ -76,13 +88,13 @@ services:
     command: ./filebeat -e --modules=nginx --setup 
     mem_limit: 100m
     volumes:
-      - ./logs/nginx:/var/log/nginx/
+      - nginxdata:/var/log/nginx/
       - fbdata:/usr/share/filebeat/data/
     networks:
       - esnet
     restart: on-failure
-  
-
+    depends_on: 
+      - kibana
 
 volumes:
   esdata1:
@@ -90,6 +102,8 @@ volumes:
   addressdata:
     driver: local
   fbdata:
+    driver: local    
+  nginxdata:
     driver: local    
 
 networks:
