@@ -1,0 +1,33 @@
+version: '2.1'
+services:
+  logstash-cities:
+    build: ./my-logstash-cities
+    container_name: logstash-cities-api
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+      HEAP_SIZE: 500m
+    networks:
+      - esnet
+    volumes:
+      - addressdata:/tmp/geonames/
+    depends_on: 
+      - download_data
+
+  download_data:
+    container_name: download_data
+    build: ./my-data-dowloader
+    mem_limit: 200m
+    networks: 
+      - esnet
+    depends_on: 
+      - elasticsearch
+    volumes:
+      - addressdata:/tmp/geonames/
+
+volumes:
+  addressdata:
+    driver: local    
+
+networks:
+  esnet:

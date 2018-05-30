@@ -1,0 +1,14 @@
+version: '2.1'
+services:
+  logstash-countries:
+    build: ./my-logstash-countries
+    container_name: logstash-countries-api
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+      HEAP_SIZE: 500m
+    networks:
+      - esnet
+
+networks:
+  esnet:

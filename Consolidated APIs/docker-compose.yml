@@ -1,0 +1,89 @@
+version: '2.1'
+services:
+  python-app:
+    restart: always
+    build: ./python-app
+    mem_limit: 200m  
+    command: gunicorn --workers=2 -b :8080 python-app:app 
+    networks:
+      - esnet
+    depends_on: 
+      - elasticsearch
+
+
+  elasticsearch:
+    build: ./my-elasticsearch
+#    container_name: elasticsearch - if you name containers you can't scale them
+    mem_limit: 2000m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+ 
+  kibana:
+    build: ./my-kibana
+    mem_limit: 800m
+    networks:
+      - esnet
+    restart: always
+    depends_on: 
+      - nginx
+
+
+  nginx:
+    build: ./my-nginx
+    mem_limit: 200m 
+    ports:
+      - 443:443      
+    volumes:
+      - nginxdata:/var/log/nginx/
+#      - ./security/certificate.crt:/etc/nginx/ssl/certificate.crt
+#      - ./security/certificate.key:/etc/nginx/ssl/certificate.key
+#      - ./security/app.htpasswd:/etc/nginx/conf.d/app.htpasswd
+#      - ./security/kibana.htpasswd:/etc/nginx/conf.d/kibana.htpasswd
+    networks:
+      - esnet
+    depends_on: 
+      - elasticsearch
+
+
+  download_data:
+    container_name: download_data
+    build: ./my-data-dowloader
+    mem_limit: 200m
+    networks: 
+      - esnet
+    depends_on: 
+      - elasticsearch
+    volumes:
+      - addressdata:/tmp/geonames/
+
+  filebeat:
+    build: ./my-filebeat
+    command: ./filebeat -e --modules=nginx --setup 
+    mem_limit: 100m
+    volumes:
+      - nginxdata:/var/log/nginx/
+      - fbdata:/usr/share/filebeat/data/
+    networks:
+      - esnet
+    restart: on-failure
+    depends_on: 
+      - kibana
+
+volumes:
+  esdata1:
+    driver: local
+  addressdata:
+    driver: local
+  fbdata:
+    driver: local    
+  nginxdata:
+    driver: local    
+
+networks:
+  esnet:
