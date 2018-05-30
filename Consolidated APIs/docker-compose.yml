@@ -1,10 +1,43 @@
 version: '2.1'
 services:
+  logstash-australian-addresses:
+    build: ./my-logstash-australian-addresses
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+      HEAP_SIZE: 500m
+    networks:
+      - esnet
+    volumes:
+      - auaddressdata:/tmp/openaddresses/
+
+  logstash-cities:
+    build: ./my-logstash-cities
+    container_name: logstash-cities-api
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+      HEAP_SIZE: 500m
+    networks:
+      - esnet
+    volumes:
+      - addressdata:/tmp/geonames/
+
+  logstash-countries:
+    build: ./my-logstash-countries
+    container_name: logstash-countries-api
+    environment:
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
+      HEAP_SIZE: 500m
+    networks:
+      - esnet
+
   python-app:
     restart: always
     build: ./python-app
-    mem_limit: 200m  
-    command: gunicorn --workers=2 -b :8080 python-app:app 
+    mem_limit: 2500m  
+    command: gunicorn --workers=1 -b :8080 python-app:app 
     networks:
       - esnet
     depends_on: 
@@ -14,7 +47,7 @@ services:
   elasticsearch:
     build: ./my-elasticsearch
 #    container_name: elasticsearch - if you name containers you can't scale them
-    mem_limit: 2000m
+    mem_limit: 600m
     ulimits:
       memlock:
         soft: -1
@@ -26,7 +59,7 @@ services:
  
   kibana:
     build: ./my-kibana
-    mem_limit: 800m
+    mem_limit: 300m
     networks:
       - esnet
     restart: always
@@ -61,6 +94,7 @@ services:
       - elasticsearch
     volumes:
       - addressdata:/tmp/geonames/
+      - auaddressdata:/tmp/openaddresses/  
 
   filebeat:
     build: ./my-filebeat
@@ -77,6 +111,8 @@ services:
 
 volumes:
   esdata1:
+    driver: local
+  auaddressdata:
     driver: local
   addressdata:
     driver: local

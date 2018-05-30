@@ -6,24 +6,20 @@ services:
     environment:
       ELASTICSEARCH_HOST: elasticsearch
       ELASTICSEARCH_PORT: 9200
-      HEAP_SIZE: 500m
+      HEAP_SIZE: 200m
     networks:
       - esnet
     volumes:
       - addressdata:/tmp/geonames/
-    depends_on: 
-      - download_data
 
-  download_data:
-    container_name: download_data
-    build: ./my-data-dowloader
-    mem_limit: 200m
-    networks: 
-      - esnet
-    depends_on: 
-      - elasticsearch
-    volumes:
-      - addressdata:/tmp/geonames/
+        #  download_data:
+        #    container_name: download_data
+        #    build: ./my-data-dowloader
+        #    mem_limit: 200m
+        #    networks: 
+        #      - esnet
+        #    volumes:
+        #      - addressdata:/tmp/geonames/
 
 volumes:
   addressdata:
