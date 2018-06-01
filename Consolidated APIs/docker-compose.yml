@@ -8,8 +8,6 @@ services:
       HEAP_SIZE: 500m
     networks:
       - esnet
-    volumes:
-      - auaddressdata:/tmp/openaddresses/
 
   logstash-cities:
     build: ./my-logstash-cities
@@ -20,8 +18,6 @@ services:
       HEAP_SIZE: 500m
     networks:
       - esnet
-    volumes:
-      - addressdata:/tmp/geonames/
 
   logstash-countries:
     build: ./my-logstash-countries
@@ -66,7 +62,6 @@ services:
     depends_on: 
       - nginx
 
-
   nginx:
     build: ./my-nginx
     mem_limit: 200m 
@@ -82,19 +77,6 @@ services:
       - esnet
     depends_on: 
       - elasticsearch
-
-
-  download_data:
-    container_name: download_data
-    build: ./my-data-dowloader
-    mem_limit: 200m
-    networks: 
-      - esnet
-    depends_on: 
-      - elasticsearch
-    volumes:
-      - addressdata:/tmp/geonames/
-      - auaddressdata:/tmp/openaddresses/  
 
   filebeat:
     build: ./my-filebeat
@@ -112,14 +94,10 @@ services:
 volumes:
   esdata1:
     driver: local
-  auaddressdata:
-    driver: local
-  addressdata:
-    driver: local
   fbdata:
     driver: local    
   nginxdata:
-    driver: local    
+    driver: local  
 
 networks:
   esnet:
