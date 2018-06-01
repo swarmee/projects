@@ -15,7 +15,7 @@ services:
     environment:
       ELASTICSEARCH_HOST: elasticsearch
       ELASTICSEARCH_PORT: 9200
-      HEAP_SIZE: 500m
+      HEAP_SIZE: 300m
     networks:
       - esnet
 
@@ -25,14 +25,14 @@ services:
     environment:
       ELASTICSEARCH_HOST: elasticsearch
       ELASTICSEARCH_PORT: 9200
-      HEAP_SIZE: 500m
+      HEAP_SIZE: 300m
     networks:
       - esnet
 
   python-app:
     restart: always
     build: ./python-app
-    mem_limit: 4000m  
+    mem_limit: 2000m  
     command: gunicorn --workers=1 -b :8080 python-app:app 
     networks:
       - esnet
@@ -43,7 +43,7 @@ services:
   elasticsearch:
     build: ./my-elasticsearch
 #    container_name: elasticsearch - if you name containers you can't scale them
-    mem_limit: 1000m
+    mem_limit: 2200m
     ulimits:
       memlock:
         soft: -1
@@ -63,6 +63,7 @@ services:
       - nginx
 
   nginx:
+    restart: always
     build: ./my-nginx
     mem_limit: 200m 
     ports:
@@ -90,7 +91,7 @@ services:
     restart: on-failure
     depends_on: 
       - kibana
-
+      - elasticsearch
 volumes:
   esdata1:
     driver: local

@@ -1,13 +1,13 @@
 {
-  "template": "openaddresses-australia",
+  "template": "icij-nodes",
   "settings": {
-    "number_of_shards": 4,
+    "number_of_shards": 5,
     "number_of_replicas": 0,
     "index.codec": "best_compression",
-    "index.refresh_interval" : "9s"
+    "index.refresh_interval" : "1s"
   },
     "mappings": {
-      "address": {
+      "icij-nodes": {
         "properties": {
           "location": {
             "type": "geo_point"

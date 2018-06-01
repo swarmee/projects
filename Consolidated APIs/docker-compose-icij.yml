@@ -1,12 +1,12 @@
 version: '2.1'
 services:
-  logstash-countries:
-    build: ./my-logstash-countries
-    container_name: logstash-countries-api
+  logstash-icij:
+    build: ./my-logstash-icij
     environment:
       ELASTICSEARCH_HOST: elasticsearch
       ELASTICSEARCH_PORT: 9200
-      HEAP_SIZE: 500m
+      HEAP_SIZE: 300m
+    mem_limit: 900m  
     networks:
       - esnet
 
