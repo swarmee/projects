@@ -32,7 +32,7 @@ services:
   python-app:
     restart: always
     build: ./python-app
-    mem_limit: 2500m  
+    mem_limit: 4000m  
     command: gunicorn --workers=1 -b :8080 python-app:app 
     networks:
       - esnet
@@ -43,7 +43,7 @@ services:
   elasticsearch:
     build: ./my-elasticsearch
 #    container_name: elasticsearch - if you name containers you can't scale them
-    mem_limit: 600m
+    mem_limit: 1000m
     ulimits:
       memlock:
         soft: -1
@@ -55,7 +55,7 @@ services:
  
   kibana:
     build: ./my-kibana
-    mem_limit: 300m
+    mem_limit: 500m
     networks:
       - esnet
     restart: always
