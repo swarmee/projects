@@ -24,6 +24,11 @@ I can not imagine anybody with any significant volume of data in elasticsearch t
 
 Option 2. Sounds much better as you only need to hold one version of the data in your V1.X production cluster and one version in your new V6.X cluster. And it provides a easy easy way to pull over any incremental changes to the V1.X cluster to the V6.X cluster - by running a subsequent reindex of all new things that have happended after the big migration (basically you can drive the reindex process based on a search). 
 
+However there is a little gotta 
+
+> _Elasticsearch provides backwards compatibility support that enables indices from the previous major version to be upgraded to the current major version. Skipping a major version means that you must resolve any backward compatibility issues yourself._
+
+
 The only thing is that when moving from 
 
 you would need to hold two versions of the data
