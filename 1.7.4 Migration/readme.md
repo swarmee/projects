@@ -12,7 +12,7 @@ However more recently Ben has been looking enviously at some of the newer featur
 
 I should also note that his elasticsearch cloud provider had let him know that elasticsearch 1.X was a legacy product for them as well - so he probably better start thinking about an upgrade.  
 
-## Migration Approach
+## Standard Migration Approach
 
 Elastic recommends two migration paths for moving between V1.X to V6.X. They are described here --> https://www.elastic.co/guide/en/elasticsearch/reference/current/reindex-upgrade.html.
 
@@ -22,24 +22,53 @@ Elastic recommends two migration paths for moving between V1.X to V6.X. They are
 
 I can not imagine anybody with any significant volume of data in elasticsearch that had reasonably high SLAs would go with option 1. Assuming you setup a secondary cluster and restored your indexes in to it to perform the upgrade, the secondary cluster would need to have enough storage for two versions of all your indexes while you performed the two reindexing processes ($$$). And there would not be a easy way to pull over the new data to the V6.X cluster that had arrived in the V1.X cluster during the migration processes. So this is not really an option for a elastic cluster that is supporting critical business processes. 
 
-Option 2. Sounds much better as you only need to hold one version of the data in your V1.X production cluster and one version in your new V6.X cluster. And it provides a easy easy way to pull over any incremental changes to the V1.X cluster to the V6.X cluster - by running a subsequent reindex of all new things that have happended after the big migration (basically you can drive the reindex process based on a search). 
+Option 2. Sounds much better as you only need to hold one version of the data in your V1.X production cluster and one version in your new V6.X cluster. And it provides a easy easy way to pull over any incremental changes to the V1.X cluster to the V6.X cluster - by running a subsequent reindex of all new things that have happended after the big migration (basically you can drive the reindex process based on a search on the V1.X cluster). 
 
-However there is a little gotta 
+However there is a little gotta, which is the data you are streaming out of your es V1.X cluster may not be compatible with elasticsearch 6.X. Basically there have been lots of breaking changes between V1.X and V6.X. These include;
+- Single mapping `_type` per index. Explained in detail here -->  https://www.elastic.co/guide/en/elasticsearch/reference/master/removal-of-types.html
+- Changes in how fields with dots within them are treated (basically they will be nested by default in V6.X). 
+- Tighter restrictions on datatypes. 
+
+Many of these issues can be easily worked around using ingest pipeline [processors](https://www.elastic.co/guide/en/elasticsearch/reference/master/ingest-processors.html) to perform actions such as renaming fields (dedotting them), change destination index names (for source indexes with mulitple types) and standarise data types. 
+
+I have provided a docker-compose file within this repo that includes elasticsearch 1.7.5 and 6.2.4 and there associated kibana versions. 
+
+
+
+I should also mention to go with this option your elasticsearch infrastructure provider needs to allow you to set the 'reindex.remote.whitelist' parameters in the elasticsearch.yml on your V6.0 cluster (nothing is required to be configured on your V1.X cluster. You can check to see if this paramater has been applied by submitting the below in kibana dev_tools 'GET /_cluster/settings?pretty&include_defaults&filter_path=defaults.reindex'
+
+## Alternative Migration Approach
+
+However if you are a user of elasticsearch its highly likely that you are  been using elasticsearch f
 
 > _Elasticsearch provides backwards compatibility support that enables indices from the previous major version to be upgraded to the current major version. Skipping a major version means that you must resolve any backward compatibility issues yourself._
 
 
-The only thing is that when moving from 
 
-you would need to hold two versions of the data
-
-for the upgrade you would nAs it would be impossible to migrate the majority of the data in one hit and then move 
-
-
-.The second option sounds pretty good. 
+ 
 
 The approach that Ben and I have taken
 
+
+## Test Environment 
+
+Before you start your 
+
+POST _reindex
+{
+  "source": {
+    "remote": {
+      "host": "http://elasticsearch9:9200"
+    },
+    "index": "source",
+    "query": {
+      "match_all": {}
+    }
+  },
+  "dest": {
+    "index": "source"
+  }
+}
 
 
 
@@ -69,4 +98,11 @@ The only problem was that His only problem is that
 
 
 
-###
+### Key Learnings
+
+Obviously, you need to run a test for yourself but in this scenario the storage savings were greater than 40% which translated into a similar reducation in the required monthly software as a service costs. 
+
+upgrade more than paid for itself in two months of storage savings. 
+by the upgrade to version 6.0 your milage may vary as a result of differences in data however 
+
+
