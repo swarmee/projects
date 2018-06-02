@@ -1,16 +1,21 @@
-## Upgrading To the Current Version of Elasticsearch from Version 1.X
+## Upgrading To a Current Version of Elasticsearch from Version 1.X
 
 
 One of my friends Ben (hey Ben) has been running elasticserch for the past 4 years, he originally started off using it as a search engine feed by his mysql database (source of truth). However like most people with an elastic cluster it has graduately be leveraged to meet logging and analytic purposes over the past few years. Basically his elastic cluster is a core part of his business. 
 
 The only issue is that his elastic cluster is stuck back on version 1.7.5. This has not really been an issue, as elasticsearch 1.X is a pretty feature rich and stable product. 
 
-However more recently he has been looking evisious at some of the newer features in elasticsearch. Specifically;
+However more recently he has been looking enviously at some of the newer features in elasticsearch. Specifically;
 - Better geo-spatical aggregrations. 
 - Pipeline aggregations
-- 
+- torage savings
+
+
+And his elasticsearch cloud provider has let him know that elasticsearch 1.X is a legacy product. 
 
 But most importantly as his business has grown his data holdings have also grown which has made his monthly hosting charged grow. 
+
+ability to compress _source_ documents in elasticsearch 2.0
 
 
 
@@ -41,10 +46,3 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/reindex-upgrade.
 I can imagine anybody anywhere with any significant volume of data in elasticsearch would go with option 1. as the outage period would just be to long leaving aside what would happen if you had an issue part way through this migration (assumming you changed your application code to work with elasticsearch version 6 only).The second option sounds pretty good. 
 
 The approach that Ben and I have taken
-
-
-
-
-
-
-
