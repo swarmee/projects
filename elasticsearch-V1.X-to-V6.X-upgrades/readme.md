@@ -8,14 +8,13 @@ The only issue is that there elastic cluster is stuck back on V1.X. This has not
 However more recently these organisations all seem to be coming to the same conculusion that its time to upgrade these older V1.X clusters. From what I can see its mainly non functional improvements in the core elastic product that are driving the upgrades. Specifically customers want to take advantage of improvements in search speed and savings in relation to storage requirements. Obviously there are lots of functional enhancements that will be able to be taken advantage of after the upgrade, but the rational for the upgrade is generally related to reduced cloud infrastructure requirements (i.e. OPEX savings). 
 
 
-
-
-And cloud elasticsearch provides are activity telling customers that elasticsearch 1.X is a legacy  legacy - so he probably better start thinking about an upgrade.  
-
-
 ### Upgrade Summary
 
-To perform any elasticsearch upgrade there are three main tasks;
+Historically due to infrastrcture constraints we pretty much always performed in place upgrades to our large production systems. However now that we are all working in the cloud running up a similar scale production cluster is fast and cheap. For an upgrade of this scale (between 3 versions of the underlying software product) the only recommended upgrade option would be to run up a concurrent cluster, get it humming and then cutover to it. 
+
+There are a couple of 
+
+The three main tasks involved in getting the new cluster up and running are:
 1. Review and update of cluster settings. 
 2. Review and update of index settings, including \_mappings, \_settings and any custom \_analysis.
 3. Migration of data / Cutover to new cluster
