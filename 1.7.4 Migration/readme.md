@@ -12,24 +12,26 @@ However more recently Ben has been looking enviously at some of the newer featur
 
 I should also note that his elasticsearch cloud provider had let him know that elasticsearch 1.X was a legacy product for them as well - so he probably better start thinking about an upgrade.  
 
-## Upgrade Summary
+### Upgrade Summary
 
 To perform any elasticsearch upgrade there are three main tasks;
 - Review and update of cluster settings. 
 - Review and update of index settings, including \_mappings, \_settings and any custom \_analysis.
 - Migration of data
 
-## Cluster Settings
+### Migration of Cluster Settings
 
-Reviewing old cluster settings is probably the most important step in the upgrade. Its ideal to go back to the vanilla settings in your V6.X cluser then just add things as needed. Carrying over old settings which were approproate for the previous cluster may not be ideal for the new cluster. Basically you need to look through the \_nodes and \_cluster end points and determine if anything needs to be changed (GET /\_nodes and GET /\_cluster/settings)
+Reviewing old cluster settings is probably the most important step in the upgrade. Its ideal to go back to the vanilla settings in your V6.X cluser then just change things as needed. Carrying over old settings from V1.X is likely not going to be ideal for the new cluster as pretty much everything has changed. I would recommend that you run some tests with vanilla V6.X settings before jumping in an change node or cluster settings.
 
-wouqueue setting
+Obviously there are a couple of important settings that need to be set in the new cluster including snapshot data path directories and the breaker settings. I strongly recommend tight breaker settings for any elasticsearch cluster with business Kibana users - cause they can't help themselves from making dashboards with 20 visulidations. 
 
-start making alterations based on before a good time to review cluster settings. theThe Data Migration Approach
+### Migration of Index Settings
 
 
-## Standard Data Migration Approach
 
+### Data Migration Approach
+
+#### Standard Approach
 Elastic recommends two migration paths for moving between V1.X to V6.X. They are described here --> https://www.elastic.co/guide/en/elasticsearch/reference/current/reindex-upgrade.html.
 
 1. Upgrade to 2.4 reindex --> upgrade to 5.6 and reindex --> upgrade to 6.X and reindex. 
@@ -87,14 +89,14 @@ _POST \reindex
 
 I should also mention to go with this option your elasticsearch infrastructure provider needs to allow you to set the 'reindex.remote.whitelist' parameters in the elasticsearch.yml on your V6.X cluster (nothing is required to be configured on your V1.X cluster). You can check to see if this paramater has been applied successfully by submitting the below in kibana dev_tools 'GET /_cluster/settings?pretty&include_defaults&filter_path=defaults.reindex'
 
-## Alternative Data Migration Approach
+#### Alternative Data Migration Approach
 
 However if you are a user of elasticsearch its highly likely that you are  been using elasticsearch f
 
 > _Elasticsearch provides backwards compatibility support that enables indices from the previous major version to be upgraded to the current major version. Skipping a major version means that you must resolve any backward compatibility issues yourself._
 
 
-## Key Learnings
+### Key Learnings
 
 Obviously, you need to run a test for yourself but in this scenario the storage savings were greater than 40% which translated into a similar reducation in the required monthly software as a service costs. 
 
