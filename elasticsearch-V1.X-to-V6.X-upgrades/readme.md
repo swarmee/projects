@@ -12,18 +12,18 @@ However more recently these organisations all seem to be coming to the same conc
 
 Historically due to infrastructure constraints all organisations pretty much always performed in place upgrades to production systems. However now that (I would say) all small to medium organisations are working in the cloud running up a similar scale production cluster is fast and cheap. For these types of upgrades where we are impacting the primary revenue stream of the organisation the only approach I recommend is running up a concurrent cluster, getting it humming and then cutting over production applications over to it. 
 
-#### Standard Migration Approaches
+#### Standard Data Migration Approaches
 Elastic recommends two migration paths for moving between V1.X to V6.X. They are described here --> https://www.elastic.co/guide/en/elasticsearch/reference/current/reindex-upgrade.html.
 
-1. Upgrade to 2.4 --> reindex --> upgrade to 5.6 --> reindex --> upgrade to 6.X --> reindex. 
+Option 1. Upgrade to 2.4 --> reindex --> upgrade to 5.6 --> reindex --> upgrade to 6.X --> reindex. 
 
-2. Create a new 6.x cluster and [reindex](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html) from remote to import indices directly from the 1.x cluster.
+Option 2. Create a new 6.x cluster and [reindex](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html) from remote to import indices directly from the 1.x cluster.
 
 Option 1. would involve restoring a backup of the production V1.X cluster into a new V1.X cluster then running through the required upgrades and reindexes. This secondary cluster would need to have double the storage of the original cluster during the two reindexing processes. The biggest issue with this approach is that there is no easy way to pull across the records that are added or updated in the production cluster after the migration started but before the new cluster takes over the role of production. And seeing there are three reindexes as part of this process the amount of time between when the migration started and when it finished could be days.  
 
 Option 2. Sounds much better as you only need to hold one version of the data in your V1.X production cluster and one version in your new V6.X cluster. And it provides an easy way to pull over any incremental changes to the V1.X cluster to the V6.X cluster after the initial migration - by running a subsequent reindex of all new things that have happended after the big migration (basically you can drive the reindex process based on a search on the V1.X cluster). 
 
-However there is a little gotta, which is the data you are streaming out of your V1.X cluster may not be compatible with elasticsearch 6.X. Basically there have been lots of breaking changes between V1.X and V6.X. These include;
+However there is a little gotta, which is, the data you are streaming out of your V1.X cluster may not be compatible with elasticsearch 6.X. Basically there have been some breaking changes between V1.X and V6.X. These include;
 - Single mapping `_type` per index. Explained in detail [here](https://www.elastic.co/guide/en/elasticsearch/reference/master/removal-of-types.html).  
 - Some changes in restrictions in relation to field names. 
 - Tighter restrictions on datatypes. 
@@ -112,8 +112,8 @@ A related change is that fielddata is turned off by default in elasticsearch V5.
 
 Here are my key take aways from what I have learnt performing these migrations: 
 
-- Storage savings are big - on each one of the clusters I have migrated I have seen storage savings between 20%-50%. This alone should provide finanical justification for this upgrade. 
+- Storage savings are big - on each one of the clusters I have migrated I have seen storage savings between 20%-50%. This alone should provide finanical justification for the upgrade. 
 
 - If you are using an elasticsearch client libarary (e.g. elasticsearch-php) enusure you review the comptability matrix before upgrading. I know it sounds stupid in retrospect. 
 
-- Most of your effort as part of the upgrade is going to be reviewing your \_mappings ensuring you have all your data typed correctly. 
+- Most of your effort as part of the upgrade is going to be spent reviewing your \_mappings, ensuring you have all your data typed correctly. 
