@@ -1,0 +1,57 @@
+version: '2.0'
+services:
+
+  elasticsearchv1.7.5:
+    image: elasticsearch:1.7.5
+    ports:
+      - 9201:9200
+    networks:
+      - esnet
+    depends_on:
+      - elasticsearchv6.2.4
+
+  kibanav4.2.1:
+    build: ./my-kibanaV4.2.1
+    environment:
+      SERVER_NAME: swarmee
+      ELASTICSEARCH_URL: http://elasticsearchv1.7.5:9200
+    ports:
+      - 5602:5601
+    networks:
+      - esnet
+    depends_on:
+      - elasticsearchv6.2.4
+
+  elasticsearchv6.2.4:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.4
+    environment:
+      - reindex.remote.whitelist=elasticsearchv1.7.5:9200
+      - node.name=swarmee01
+      - cluster.name=swarmee
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms500m -Xmx500m"
+    ports:
+      - 9200:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: 1000m
+    networks:
+      - esnet
+
+  kibanav6.2.4:
+    image: docker.elastic.co/kibana/kibana-oss:6.2.4
+    environment:
+      SERVER_NAME: swarmee
+      ELASTICSEARCH_URL: http://elasticsearchv6.2.4:9200
+    mem_limit: 500m
+    ports:
+      - 5601:5601
+    networks:
+      - esnet
+    depends_on:
+      - elasticsearchv6.2.4
+
+networks:
+  esnet:

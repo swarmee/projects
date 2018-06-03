@@ -1,0 +1,7 @@
+version: '2.0'
+services:
+  logstash-indexName-migrator:
+    build: ./my-logstash
+    env_file:
+      - ./.env
+
