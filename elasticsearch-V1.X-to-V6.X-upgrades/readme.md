@@ -21,7 +21,7 @@ Elastic recommends two migration paths for moving between V1.X to V6.X. They are
 
 Option 1. would involve restoring a backup of the production V1.X cluster into a new V1.X cluster then running through the required upgrades and reindexes. This secondary cluster would need to have double the storage of the original cluster during the two reindexing processes. The biggest issue with this approach is that there is no easy way to pull across the records that are added or updated in the production cluster after the migration started but before the new cluster takes over the role of production. And seeing there are three reindexes as part of this process the amount of time between when the migration started and when it finished could be days.  
 
-Option 2. Sounds much better as you only need to hold one version of the data in your V1.X production cluster and one version in your new V6.X cluster. And it provides an easy way to pull over any incremental changes to the V1.X cluster to the V6.X cluster after the initial migration - by running a subsequent reindex of all new things that have happended after the big migration (basically you can drive the reindex process based on a search on the V1.X cluster). 
+Option 2. Sounds much better as you only need to hold one version of the data in your V1.X production cluster and one version in your new V6.X cluster. And it provides an easy way to pull over any incremental changes to the V1.X cluster to the V6.X cluster after the initial migration - by running a subsequent reindex of all new things that have happened after the big migration (basically you can drive the reindex process based on a search on the V1.X cluster). 
 
 However there is a little gotta, which is, the data you are streaming out of your V1.X cluster may not be compatible with elasticsearch 6.X. Basically there have been some breaking changes between V1.X and V6.X. These include;
 - Single mapping `_type` per index. Explained in detail [here](https://www.elastic.co/guide/en/elasticsearch/reference/master/removal-of-types.html).  
@@ -70,7 +70,8 @@ POST \_reindex
 }
 
 I should also mention that this option requires your elasticsearch provider to allow you to set the 'reindex.remote.whitelist' parameters in the elasticsearch.yml on your V6.X cluster (nothing is required to be configured on your V1.X cluster). 
-You can check to see if this paramater has been applied successfully by submitting the below in kibana dev_tools 'GET /_cluster/settings?pretty&include_defaults&filter_path=defaults.reindex'
+You can check to see if this parameter has been applied successfully by submitting the below in kibana dev_tools 'GET /_cluster/settings?pretty&include_defaults&filter_path=defaults.reindex'
+
 
 #### Alternative Data Migration Approach
 
@@ -93,27 +94,30 @@ Underneath that there is a sub folder called my-logstash which includes:
 
 ### Migration of Cluster Settings
 
-Its important to review the V1.X cluster to see what settings have been configured. Its often a case of nobody knowing why certain settings have been changed from the defaults. Its ideal to use the vanilla settings in your V6.X cluster and only change things as needed. Carrying over old settings from V1.X is likely not going to be ideal for the new cluster. I would recommend that you run some tests with vanilla V6.X settings before jumping in and changing any node or cluster settings.
+It's important to review the V1.X cluster to see what settings have been configured. It's often a case of nobody knowing why certain settings have been changed from the defaults. Its ideal to use the vanilla settings in your V6.X cluster and only change things as needed. Carrying over old settings from V1.X is likely not going to be ideal for the new cluster. I would recommend that you run some tests with vanilla V6.X settings before jumping in and changing any node or cluster settings.
 
-Obviously there are a couple of important settings that need to be set in the new cluster including snapshot data path directories and the breaker settings. I strongly recommend tight breaker settings for any elasticsearch cluster with business Kibana users - cause they can't help themselves from making dashboards with 20 visulidations. 
+Obviously there are a couple of important settings that need to be set in the new cluster including snapshot data path directories and the breaker settings. I strongly recommend tight breaker settings for any elasticsearch cluster with business Kibana users - cause they can't help themselves from making dashboards with 20 visualizations.
+ 
 
 ### Migration of Index Settings
 
-The biggest change in index settings to get your head around between V1.X and V6.X relates to text fields (this particuar change actually occured in V5.X). The direct mapping between the data types between the versions is:
+The biggest change in index settings to get your head around between V1.X and V6.X relates to text fields (this particular change actually occured in V5.X). The direct mapping between the data types between the versions is:
 - `Analysed strings` in old cluster becomes `text` in new cluster, and
 - `Non analysed strings` in old cluster becomes `keywords` in new cluster. 
 
 Further details can be found in the related elasticsearch [blog](https://www.elastic.co/blog/strings-are-dead-long-live-strings)
 
-A related change is that fielddata is turned off by default in elasticsearch V5.X+. The only use case where I have found where fielddata to be required in a elasticsearch V6.X cluster was for generating word clouds based on large text fields, in all other cases I have found keyword fields sufficient to meet business requirements. If you can avoid turning fielddata on you should as it will save you JVM heap for other purposes.  
+A related change is that fielddata is turned off by default in elasticsearch V5.X+. The only use case where I have found where fielddata to be required in a elasticsearch V6.X cluster was for generating word clouds based on large text fields, in all other cases I have found keyword fields sufficient to meet business requirements. If you can avoid turning fielddata on you should as it will save you JVM heap for other purposes.
+  
 
 
 ### Key Learnings
 
-Here are my key take aways from what I have learnt performing these migrations: 
+Here are my key takeaways from what I have learnt performing these migrations: 
 
-- Storage savings are big - on each one of the clusters I have migrated I have seen storage savings between 20%-50%. This alone should provide finanical justification for the upgrade. 
+- Storage savings are big - on each one of the clusters I have migrated I have seen storage savings between 20%-50%. This alone should provide financial justification for the upgrade. 
 
-- If you are using an elasticsearch client libarary (e.g. elasticsearch-php) enusure you review the comptability matrix before upgrading. I know it sounds stupid in retrospect. 
+- If you are using an elasticsearch client library (e.g. elasticsearch-php) ensure you review the compatibility matrix before upgrading. I know it sounds stupid in retrospect. 
 
 - Most of your effort as part of the upgrade is going to be spent reviewing your \_mappings, ensuring you have all your data typed correctly. 
+
