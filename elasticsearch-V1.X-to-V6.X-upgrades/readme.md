@@ -80,7 +80,7 @@ POST /my-index/my-type/1
 Here is a example of a re-indexing request for the data POST'ed in above in dev_tools (V6.X kibana).  
 
 
-POST \reindex
+POST \_reindex
 
 {
   "source": {
