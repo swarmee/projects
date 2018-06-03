@@ -15,9 +15,9 @@ Historically due to infrastructure constraints all organisations pretty much alw
 #### Standard Data Migration Approaches
 Elastic recommends two migration paths for moving between V1.X to V6.X. They are described here --> https://www.elastic.co/guide/en/elasticsearch/reference/current/reindex-upgrade.html.
 
-Option 1. Upgrade to 2.4 --> reindex --> upgrade to 5.6 --> reindex --> upgrade to 6.X --> reindex. 
+##### Option 1. Upgrade to 2.4 --> reindex --> upgrade to 5.6 --> reindex --> upgrade to 6.X --> reindex. 
 
-Option 2. Create a new 6.x cluster and [reindex](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html) from remote to import indices directly from the 1.x cluster.
+##### Option 2. Create a new 6.x cluster and [reindex](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html) from remote to import indices directly from the 1.x cluster.
 
 Option 1. would involve restoring a backup of the production V1.X cluster into a new V1.X cluster then running through the required upgrades and reindexes. This secondary cluster would need to have double the storage of the original cluster during the two reindexing processes. The biggest issue with this approach is that there is no easy way to pull across the records that are added or updated in the production cluster after the migration started but before the new cluster takes over the role of production. And seeing there are three reindexes as part of this process the amount of time between when the migration started and when it finished could be days.  
 
