@@ -105,15 +105,14 @@ The benefit of using logstash is that it can be packaged up with a template that
 
 I have provided a sample docker-compose configuration in the folder named `sample-logstash-migrator` which demonstrates this idea. 
 
-I normally create a container for each index to be migrated. You can see that within the repo there is a docker-compose.yml file which does nothing apart from build the docker logstash image and apply the environment variables to the image (e.g. password, username, source and target elastic urls, etc).
+I normally create a container for each index to be migrated. You can see that within the repo there is a docker-compose.yml file which does nothing apart from build the docker logstash image and apply the environment variables to the image (e.g. password, username, source and target elastic urls, etc). You could do the same with a long docker run command. 
 
-The environment variables are stored in a .env which is generally not stored in git however I ahve included it for completeness of understanding. 
+The environment variables are stored in a .env which is generally not stored in git however I have included it for completeness of understanding. 
 
-Underneath that there is a sub folder called my-logstash which includes
+Underneath that there is a sub folder called my-logstash which includes: 
 - The dockerfile - which specifies the version of logstash to use (and any plugins to be installed).
 - The logstash configuration - which has three parts A. input - configuration to pull data from the V1.7 cluster B. filter - which performs any required transformations. C. output - configuration to push data into the elastic 6.X cluster.
-- The elasticsearch index template to be applied. This has the _mappings as well as the _settings for the index being created.
-
+- The elasticsearch index template to be applied. This has the \_mappings as well as the \_settings for the index being created.
 
 
 ### Key Learnings
