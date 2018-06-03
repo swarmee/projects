@@ -31,11 +31,13 @@ However there is a little gotta, which is the data you are streaming out of your
 
 Many of these issues can be easily worked around using ingest pipeline [processors](https://www.elastic.co/guide/en/elasticsearch/reference/master/ingest-processors.html) to perform actions such as renaming fields (dedotting them), change destination index names (for source indexes with mulitple types) and standarise data types. 
 
-I have provided a docker-compose file within this repo that includes elasticsearch 1.7.5 and 6.2.4 and there associated kibana versions. 
+As a quick start to this analysis I have provided a docker-compose configuration in the folder named `elasticserach-esV1.7-and-esV6.2.4`. 
+
+within this repo that includes elasticsearch 1.7.5 and 6.2.4 and there associated kibana versions. 
 
 
 
-I should also mention to go with this option your elasticsearch infrastructure provider needs to allow you to set the 'reindex.remote.whitelist' parameters in the elasticsearch.yml on your V6.0 cluster (nothing is required to be configured on your V1.X cluster. You can check to see if this paramater has been applied by submitting the below in kibana dev_tools 'GET /_cluster/settings?pretty&include_defaults&filter_path=defaults.reindex'
+I should also mention to go with this option your elasticsearch infrastructure provider needs to allow you to set the 'reindex.remote.whitelist' parameters in the elasticsearch.yml on your V6.0 cluster (nothing is required to be configured on your V1.X cluster). You can check to see if this paramater has been applied successfully by submitting the below in kibana dev_tools 'GET /_cluster/settings?pretty&include_defaults&filter_path=defaults.reindex'
 
 ## Alternative Migration Approach
 
