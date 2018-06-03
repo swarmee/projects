@@ -1,9 +1,9 @@
 ## Upgrading Elasticsearch from Version 1.X to Version 6.X
 
 ### Background
-Recently I have been helping out a number of organisations upgrading from elasticsearch V1.X to V6.X. The story is uncannily similar at each organisation. They have been running elasticsearch for the past 4+ years, they originally started off using elasticsearch as a search engine feed by an application database (mostly mysql, but sometimes postgres or Mongo) that is their source of truth. Since then elasticsearch has gradually been leveraged to meet logging and analytic purposes. To a point now where elastic cluster is a core part of the service they provide.  
+Recently I have been helping out a number of small organisations upgrading from elasticsearch V1.X to V6.X. The story is uncannily similar at each organisation. They have been running elasticsearch for the past 4+ years, they originally started off using elasticsearch as a search engine feed by an application database (mostly mysql, but sometimes postgres or Mongo) that is their source of truth. Since then elasticsearch has gradually been leveraged to meet logging and analytic purposes. To a point where elastic cluster is a core part of the service they provide.  
 
-The only issue is that there elastic cluster is stuck back on V1.X. This has not really been an issue, as elasticsearch 1.X is a pretty feature rich and stable product and cloud providers have been happily provisioning them for years. 
+The only issue is that there elastic cluster is stuck back on V1.X. This has not really been an issue, as elasticsearch 1.X is a pretty feature rich, stable and cloud providers have got pretty good and managing them over the years.  
 
 However more recently these organisations all seem to be coming to the same conculusion that its time to upgrade these older V1.X clusters. From what I can see its mainly non functional improvements in the core elastic product that are driving the upgrades. Specifically customers want to take advantage of improvements in search speed and savings in relation to storage requirements. Obviously there are lots of functional enhancements that will be able to be taken advantage of after the upgrade, but the rational for the upgrade is generally related to reduced cloud infrastructure requirements (i.e. OPEX savings). 
 
