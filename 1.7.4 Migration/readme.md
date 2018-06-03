@@ -31,7 +31,13 @@ However there is a little gotta, which is the data you are streaming out of your
 
 Many of these issues can be easily worked around using ingest pipeline [processors](https://www.elastic.co/guide/en/elasticsearch/reference/master/ingest-processors.html) to perform actions such as renaming fields (dedotting them), change destination index names (for source indexes with mulitple types) and standarise data types. 
 
-As a quick start to this analysis I have provided a docker-compose configuration in the folder named `elasticserach-esV1.7-and-esV6.2.4`. 
+As a quick start to this process I have provided a docker-compose configuration in the folder named `elasticserach-esV1.7-and-esV6.2.4`. All you need to do is clone the repo, `cd` into that direction and then run `docker-compose up` (I'm assuming you have docker and docker-compose installed already --> if you don't do a google search for get docker). This will bring up 
+- elasticsearch V1.7.4 (localhost:9201)
+- kibana 4.2 with sense installed (localhost:5602). 
+- elasticsearch V6.2.4 (localhost:9200)
+- kibana 6.4.2 (localhost:5601). 
+
+
 
 within this repo that includes elasticsearch 1.7.5 and 6.2.4 and there associated kibana versions. 
 
