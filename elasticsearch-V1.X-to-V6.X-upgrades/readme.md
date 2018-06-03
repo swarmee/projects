@@ -13,7 +13,7 @@ However more recently these organisations all seem to be coming to the same conc
 Historically due to infrastructure constraints all organisations pretty much always performed in place upgrades to production systems. However now that (I would say) all small to medium organisations are working in the cloud running up a similar scale production cluster is fast and cheap. For these types of upgrades where we are impacting the primary revenue stream of the organisation the only approach I recommend is running up a concurrent cluster, getting it humming and then cutting over production applications over to it. 
 
 #### Standard Data Migration Approaches
-Elastic recommends two migration paths for moving between V1.X to V6.X. They are described here --> https://www.elastic.co/guide/en/elasticsearch/reference/current/reindex-upgrade.html.
+Elastic [recommends](https://www.elastic.co/guide/en/elasticsearch/reference/current/reindex-upgrade.html) two migration paths for moving between V1.X to V6.X.
 
 ##### Option 1. Upgrade to 2.4 --> reindex --> upgrade to 5.6 --> reindex --> upgrade to 6.X --> reindex. 
 
@@ -119,5 +119,4 @@ Here are my key takeaways from what I have learnt performing these migrations:
 
 - If you are using an elasticsearch client library (e.g. elasticsearch-php) ensure you review the compatibility matrix before upgrading. I know it sounds stupid in retrospect. 
 
-- Most of your effort as part of the upgrade is going to be spent reviewing your \_mappings, ensuring you have all your data typed correctly. 
-
+- Most of your effort as part of the upgrade is going to be spent reviewing your \_mappings, ensuring you have all your data typed correctly.
