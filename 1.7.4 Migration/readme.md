@@ -1,16 +1,14 @@
-## Upgrading To a Current Version of Elasticsearch from Version 1.X
+## Upgrading Elasticsearch from Version 1.X to Version 6.X
 
 ### Background
-One of my friends Ben (hey Ben) has been running elasticserch for the past 4 years, he originally started off using it as a search engine feed by his mysql database (source of truth). However like most people with an elastic cluster it has graduately be leveraged to meet logging and analytic purposes over the past few years. Basically his elastic cluster is a core part of his business. 
+Recently I have been helping out a number of organisations upgrading from elasticsearch V1.X to V6.X. The story is uncannily similar at each organisation. They have been running elasticsearch for the past 4+ years, they originally started off using elasticsearch as a search engine feed by an application database (mostly mysql, but sometimes postgres or Mongo) that is their source of truth. Since then elasticsearch has gradually been leveraged to meet logging and analytic purposes. To a point now where elastic cluster is a core part of the service they provide.  
 
-The only issue is that his elastic cluster is stuck back on version 1.7.5. This has not really been an issue at all until recently, as elasticsearch 1.X is a pretty feature rich and stable product. 
-
-However more recently Ben has been looking enviously at some of the newer features in elasticsearch. Specifically;
-- Improved search speed, 
+The only issue is that his elastic cluster is stuck back on V1.X. This has not really been an issue, as elasticsearch 1.X is a pretty feature rich and stable product and cloud providers have been happily provisioning the years. However more recently they have been looking enviously at some of the newer features in elasticsearch. Specifically;
+- Improved search speed (everybodies data volumes have increased expotentially over the last 4 years), 
 - More feature rich aggregrations (particualry in relation to geo-spatical analysis). 
-- Storage savings - i.e. being able to compress source documents and taking advantage of the space savings associate with sparsely populated.
+- Storage savings - i.e. being able to compress source documents and taking advantage of the space savings associate with new lucene data structures.
 
-I should also note that his elasticsearch cloud provider had let him know that elasticsearch 1.X was a legacy product for them as well - so he probably better start thinking about an upgrade.  
+And cloud elasticsearch provides are activity telling customers that elasticsearch 1.X is a legacy  legacy - so he probably better start thinking about an upgrade.  
 
 ### Upgrade Summary
 
