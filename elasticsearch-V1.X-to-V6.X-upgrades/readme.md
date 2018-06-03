@@ -10,8 +10,7 @@ However more recently these organisations all seem to be coming to the same conc
 
 ### Data Migration Approach
 
-Historically due to infrastructure constraints all organisations pretty much always performed in place upgrades to production systems. However now that (I would say) all small to medium organisations are working in the cloud running up a similar scale production cluster is fast and cheap. For an upgrade of this complexity/scale (between 3 versions of the underlying software product) the only approach I recommend is running up a concurrent cluster, getting it humming and then cutting over production applications over to it. 
-The risk of performing an in place upgrade to a production application that is driving the primary revenue stream for these organisations would be too high.
+Historically due to infrastructure constraints all organisations pretty much always performed in place upgrades to production systems. However now that (I would say) all small to medium organisations are working in the cloud running up a similar scale production cluster is fast and cheap. For these types of upgrades where we are impacting the primary revenue stream of the organisation the only approach I recommend is running up a concurrent cluster, getting it humming and then cutting over production applications over to it. 
 
 #### Standard Migration Approaches
 Elastic recommends two migration paths for moving between V1.X to V6.X. They are described here --> https://www.elastic.co/guide/en/elasticsearch/reference/current/reindex-upgrade.html.
