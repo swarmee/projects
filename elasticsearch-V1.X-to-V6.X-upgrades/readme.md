@@ -109,30 +109,12 @@ Further details can be found in the related elasticsearch [blog](https://www.ela
 A related change is that fielddata is turned off by default in elasticsearch V5.X+. The only use case where I have found where fielddata to be required in a elasticsearch V6.X cluster was for generating word clouds based on large text fields, in all other cases I have found keyword fields sufficient to meet business requirements. If you can avoid turning fielddata on you should as it will save you JVM heap for other purposes.  
 
 
-
-
-
 ### Key Learnings
-There are a couple of 
 
-The three main tasks involved in getting the new cluster up and running are:
-1. Review and update of cluster settings. 
-2. Review and update of index settings, including \_mappings, \_settings and any custom \_analysis.
-3. Migration of data / Cutover to new cluster
+Here are my key take aways from what I have learnt performing these migrations: 
 
-Most concern is directed towards the migration of data and the cutover to the new cluster. However this ends up being pretty easy. Most of the effort is required to review and update index settings as lots has changed in this area. 
+- Storage savings are big - on each one of the clusters I have migrated I have seen storage savings between 20%-50%. This alone should provide finanical justification for this upgrade. 
 
+- If you are using an elasticsearch client libarary (e.g. elasticsearch-php) enusure you review the comptability matrix before upgrading. I know it sounds stupid in retrospect. 
 
-Obviously, you need to run a test for yourself but in this scenario the storage savings were greater than 40% which translated into a similar reducation in the required monthly software as a service costs. 
-
-upgrade more than paid for itself in two months of storage savings. 
-by the upgrade to version 6.0 your milage may vary as a result of differences in data however
-
-will be provided as part of the upgrade but being able to reduce your storage footprint by greater than 30% 
-
-its a combination of new features in 
-
-more recently they have been looking enviously at some of the newer features in elasticsearch. Specifically;
-- Improved search speed (everybodies data volumes have increased exponentially over the last 4 years), 
-- More feature rich aggregations (particularly in relation to geospatial analysis). 
-- Storage savings - i.e. being able to compress source documents and taking advantage of the space savings associate with new lucene data structures.
+- Most of your effort as part of the upgrade is going to be reviewing your \_mappings ensuring you have all your data typed correctly. 
