@@ -12,7 +12,14 @@ However more recently Ben has been looking enviously at some of the newer featur
 
 I should also note that his elasticsearch cloud provider had let him know that elasticsearch 1.X was a legacy product for them as well - so he probably better start thinking about an upgrade.  
 
-## Standard Migration Approach
+## Upgrade Summary
+
+There are three major activities involved in any elasticsearch upgrade; 
+- Reviewing and updating the cluster settings.
+- Reviewing and updating index settings. 
+- Migrating the data.
+
+### Standard Migration Approach
 
 Elastic recommends two migration paths for moving between V1.X to V6.X. They are described here --> https://www.elastic.co/guide/en/elasticsearch/reference/current/reindex-upgrade.html.
 
@@ -31,17 +38,17 @@ However there is a little gotta, which is the data you are streaming out of your
 
 Many of these issues can be easily worked around using ingest pipeline [processors](https://www.elastic.co/guide/en/elasticsearch/reference/master/ingest-processors.html) to perform actions such as renaming fields (dedotting them), change destination index names (for source indexes with mulitple types) and standarise data types. 
 
-As a quick start to this process I have provided a docker-compose configuration in the folder named `elasticserach-esV1.7-and-esV6.2.4`. All you need to do is clone the repo, `cd` into that direction and then run `docker-compose up` (I'm assuming you have docker and docker-compose installed already --> if you don't do a google search for get docker). This will bring up 
-- elasticsearch V1.7.4 (localhost:9201)
-- kibana 4.2 with sense installed (localhost:5602). 
-- elasticsearch V6.2.4 (localhost:9200)
-- kibana 6.4.2 (localhost:5601). 
+As a quick start to this process I have provided a docker-compose configuration in the folder named `elasticserach-esV1.7-and-esV6.2.4`. All you need to do is clone the repo, `cd` into that direction and then run `docker-compose up` (I'm assuming you have docker and docker-compose installed already --> if you don't do a google search for get docker). 
 
+This will bring up the following applications:
+- elasticsearch V1.7.4 (http://localhost:9201)
+- kibana 4.2 with sense installed (http://localhost:5602). 
+- elasticsearch V6.2.4 (http://localhost:9200)
+- kibana 6.4.2 (http://localhost:5601). 
 
+This will provide you with a local sandpit to see how much data transformation will be required to your data before it can be loaded into elasticsearch V6.X. What you should do is POST some documents into the V1.7.5 cluster (using sense) then test out reindexing that data by submitting a reindexing request into dev_tools in kibana 6.2.4. 
 
-within this repo that includes elasticsearch 1.7.5 and 6.2.4 and there associated kibana versions. 
-
-
+Hopefully your data does not require that much transformation. 
 
 I should also mention to go with this option your elasticsearch infrastructure provider needs to allow you to set the 'reindex.remote.whitelist' parameters in the elasticsearch.yml on your V6.0 cluster (nothing is required to be configured on your V1.X cluster). You can check to see if this paramater has been applied successfully by submitting the below in kibana dev_tools 'GET /_cluster/settings?pretty&include_defaults&filter_path=defaults.reindex'
 
