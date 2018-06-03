@@ -12,7 +12,23 @@ However more recently Ben has been looking enviously at some of the newer featur
 
 I should also note that his elasticsearch cloud provider had let him know that elasticsearch 1.X was a legacy product for them as well - so he probably better start thinking about an upgrade.  
 
-## Standard Migration Approach
+## Upgrade Summary
+
+To perform any elasticsearch upgrade there are three main tasks;
+- Review and update of cluster settings. 
+- Review and update of index settings, including \_mappings, \_settings and any custom \_analysis.
+- Migration of data
+
+## Cluster Settings
+
+Reviewing old cluster settings is probably the most important step in the upgrade. Its ideal to go back to the vanilla settings in your V6.X cluser then just add things as needed. Carrying over old settings which were approproate for the previous cluster may not be ideal for the new cluster. Basically you need to look through the \_nodes and \_cluster end points and determine if anything needs to be changed (GET /\_nodes and GET /\_cluster/settings)
+
+wouqueue setting
+
+start making alterations based on before a good time to review cluster settings. theThe Data Migration Approach
+
+
+## Standard Data Migration Approach
 
 Elastic recommends two migration paths for moving between V1.X to V6.X. They are described here --> https://www.elastic.co/guide/en/elasticsearch/reference/current/reindex-upgrade.html.
 
@@ -41,17 +57,17 @@ Once you have booted up these containers its pretty easy to POST some data into 
 
 Here is an example of POST'ing some data into the V1.X cluster using sense (V4.X kibana). 
 
-POST /my-index/my-type/1
+_POST /my-index/my-type/1
 
 {
   "report.first": 1,
   "report.last": 1000
-} 
+}_
 
 Here is a example of a re-indexing request for the data POST'ed in above in dev_tools (V6.X kibana).  
 
 
-POST \_reindex
+_POST \reindex
 
 {
   "source": {
@@ -60,80 +76,25 @@ POST \_reindex
     },
     "index": "my-index",
     "query": {
-      "match_all": {}
+      "matchall": {}
     }
   },
   "dest": {
     "index": "my-index"
   }
-} 
-
+}_
 
 
 I should also mention to go with this option your elasticsearch infrastructure provider needs to allow you to set the 'reindex.remote.whitelist' parameters in the elasticsearch.yml on your V6.X cluster (nothing is required to be configured on your V1.X cluster). You can check to see if this paramater has been applied successfully by submitting the below in kibana dev_tools 'GET /_cluster/settings?pretty&include_defaults&filter_path=defaults.reindex'
 
-## Alternative Migration Approach
+## Alternative Data Migration Approach
 
 However if you are a user of elasticsearch its highly likely that you are  been using elasticsearch f
 
 > _Elasticsearch provides backwards compatibility support that enables indices from the previous major version to be upgraded to the current major version. Skipping a major version means that you must resolve any backward compatibility issues yourself._
 
 
-
- 
-
-The approach that Ben and I have taken
-
-
-## Test Environment 
-
-Before you start your 
-
-POST _reindex
-{
-  "source": {
-    "remote": {
-      "host": "http://elasticsearch9:9200"
-    },
-    "index": "source",
-    "query": {
-      "match_all": {}
-    }
-  },
-  "dest": {
-    "index": "source"
-  }
-}
-
-
-
-
-
-
-
-
-
-
-But most importantly as his business has grown his data holdings have also grown which has made his monthly hosting charged grow. 
-
-ability to compress _source_ documents in elasticsearch 2.0
-
-
-
-but also storage savings (paricualary for his main search index which has lots of small nested documents. 
-
-
-- and during. During that time it has been working for him very well as a search engine.
-
-Originally it was just providing him a search engine, however over time he has started to use it for logging as business analytics. 
-
-
-The only problem was that His only problem is that 
-
-
-
-
-### Key Learnings
+## Key Learnings
 
 Obviously, you need to run a test for yourself but in this scenario the storage savings were greater than 40% which translated into a similar reducation in the required monthly software as a service costs. 
 
