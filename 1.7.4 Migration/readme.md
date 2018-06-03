@@ -13,23 +13,32 @@ And cloud elasticsearch provides are activity telling customers that elasticsear
 ### Upgrade Summary
 
 To perform any elasticsearch upgrade there are three main tasks;
-- Review and update of cluster settings. 
-- Review and update of index settings, including \_mappings, \_settings and any custom \_analysis.
-- Migration of data
+1. Review and update of cluster settings. 
+2. Review and update of index settings, including \_mappings, \_settings and any custom \_analysis.
+3. Migration of data / Cutover to new cluster
 
-### Migration of Cluster Settings
+Most concern is directed towards the migration of data and the cutover to the new cluster. However this ends up being pretty easy. Most of the effort is required to review and update index settings as lots has changed in this area. 
+
+
+### 1. Migration of Cluster Settings
 
 Reviewing old cluster settings is probably the most important step in the upgrade. Its ideal to go back to the vanilla settings in your V6.X cluser then just change things as needed. Carrying over old settings from V1.X is likely not going to be ideal for the new cluster as pretty much everything has changed. I would recommend that you run some tests with vanilla V6.X settings before jumping in an change node or cluster settings.
 
 Obviously there are a couple of important settings that need to be set in the new cluster including snapshot data path directories and the breaker settings. I strongly recommend tight breaker settings for any elasticsearch cluster with business Kibana users - cause they can't help themselves from making dashboards with 20 visulidations. 
 
-### Migration of Index Settings
+### 2. Migration of Index Settings
+
+The biggest in index settings to get your head around between V1.X and V6.X relates to text fields (this particuar change actually occured in V5.X). The direct mapping between the data types between the versions is:
+- `Analysed strings` in old cluster becomes `text` in new cluster, and
+- `Non analysed strings` inold cluster becomes `keywords` in new cluster. 
+
+Lots more is explained in the related elasticsearch [blog](https://www.elastic.co/blog/strings-are-dead-long-live-strings)
 
 
 
-### Data Migration Approach
+### 3. Data Migration Approach
 
-#### Standard Approach
+#### 3a. Standard Approach
 Elastic recommends two migration paths for moving between V1.X to V6.X. They are described here --> https://www.elastic.co/guide/en/elasticsearch/reference/current/reindex-upgrade.html.
 
 1. Upgrade to 2.4 reindex --> upgrade to 5.6 and reindex --> upgrade to 6.X and reindex. 
@@ -87,7 +96,7 @@ _POST \reindex
 
 I should also mention to go with this option your elasticsearch infrastructure provider needs to allow you to set the 'reindex.remote.whitelist' parameters in the elasticsearch.yml on your V6.X cluster (nothing is required to be configured on your V1.X cluster). You can check to see if this paramater has been applied successfully by submitting the below in kibana dev_tools 'GET /_cluster/settings?pretty&include_defaults&filter_path=defaults.reindex'
 
-#### Alternative Data Migration Approach
+#### 3b. Alternative Data Migration Approach
 
 However if you are a user of elasticsearch its highly likely that you are  been using elasticsearch f
 
