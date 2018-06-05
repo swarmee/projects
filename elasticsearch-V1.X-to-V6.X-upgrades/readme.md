@@ -94,10 +94,9 @@ Underneath that there is a sub folder called my-logstash which includes:
 
 ### Migration of Cluster Settings
 
-It's important to review the V1.X cluster to see what settings have been configured. It's often a case of nobody knowing why certain settings have been changed from the defaults. Its ideal to use the vanilla settings in your V6.X cluster and only change things as needed. Carrying over old settings from V1.X is likely not going to be ideal for the new cluster. I would recommend that you run some tests with vanilla V6.X settings before jumping in and changing any node or cluster settings.
+It's often the case of nobody knowing why certain settings have been set for your old V1.X cluster. Rather than trying to work out those historical reasons I highly recommend just going with the vanilla settings in your V6.X cluster and then change things based on testing in the V6.X cluster. Carrying over old settings from V1.X is likely not going to be ideal for the new cluster.
 
-Obviously there are a couple of important settings that need to be set in the new cluster including snapshot data path directories and the breaker settings. I strongly recommend tight breaker settings for any elasticsearch cluster with business Kibana users - cause they can't help themselves from making dashboards with 20 visualizations.
- 
+Obviously there are a couple of customer specific settings that need to be set in the new cluster including snapshot data path directories and the breaker settings. I strongly recommend tight breaker settings for any elasticsearch cluster with business Kibana users - cause they can't help themselves from making dashboards with 20 visualizations.
 
 ### Migration of Index Settings
 
@@ -108,14 +107,14 @@ The biggest change in index settings to get your head around between V1.X and V6
 Further details can be found in the related elasticsearch [blog](https://www.elastic.co/blog/strings-are-dead-long-live-strings)
 
 A related change is that fielddata is turned off by default in elasticsearch V5.X+. The only use case where I have found where fielddata to be required in a elasticsearch V6.X cluster was for generating word clouds based on large text fields, in all other cases I have found keyword fields sufficient to meet business requirements. If you can avoid turning fielddata on you should as it will save you JVM heap for other purposes.
-  
-
 
 ### Key Learnings
 
 Here are my key takeaways from what I have learnt performing these migrations: 
 
-- Storage savings are big between elastic V1.X and V6.X - on each one of the clusters I have migrated I have seen storage savings between 20%-50%. This alone should provide financial justification for the upgrade. 
+- ****Don't**** perform a inplace upgrade on your production cluster. I guarantee that there will be unforeseen impacts as a result of this upgrade. The migration assistant is helpful however don't expect it to identify all possible issues. 
+
+- Storage savings are big between elastic V1.X and V6.X - on each one of the clusters I have migrated I have seen storage savings between 20%-50%. This alone should provide financial justification for the upgrade.  
 
 - If you are using an elasticsearch client library (e.g. elasticsearch-php) ensure you review the compatibility matrix before upgrading. I know it sounds stupid in retrospect. 
 
