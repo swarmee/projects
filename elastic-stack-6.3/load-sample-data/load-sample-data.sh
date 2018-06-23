@@ -3,15 +3,15 @@
 # Wait for Elasticsearch to start up before doing anything.
 until curl -s http://elasticsearch:9200/_cat/health -o /dev/null; do
     echo Waiting for Elasticsearch...
-    sleep 1
+    sleep 10
 done
 
 
 # Wait for Kibana to start up before doing anything.
-##until curl -s http://kibana1:5601/login -o /dev/null; do
-##    echo Waiting for Kibana...
-##    sleep 1
-##done
+until curl -s http://kibana1:5601/login -o /dev/null; do
+    echo Waiting for Kibana...
+    sleep 10
+done
 
 
 # load mapping
