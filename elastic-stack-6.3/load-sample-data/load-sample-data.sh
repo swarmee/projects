@@ -8,7 +8,7 @@ done
 
 
 # Wait for Kibana to start up before doing anything.
-until curl -s http://kibana1:5601/login -o /dev/null; do
+until curl -s http://kibana:5601/login -o /dev/null; do
     echo Waiting for Kibana...
     sleep 10
 done
