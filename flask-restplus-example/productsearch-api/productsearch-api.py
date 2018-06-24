@@ -5,7 +5,7 @@ from elasticsearch import Elasticsearch
 import json
 
 
-es_host = {"host": "swarmee.net", "port": 9200}
+es_host = {"host": "elasticsearch", "port": 9200}
 es = Elasticsearch([es_host], retry_on_timeout=True, maxsize=25)
 
 app = Flask(__name__)
