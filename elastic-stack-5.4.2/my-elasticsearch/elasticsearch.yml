@@ -183,3 +183,4 @@ xpack.ml.enabled: false
 xpack.graph.enabled: false
 #xpack.security.audit.enabled: true
 #xpack.security.audit.outputs: ["index"]
+xpack.security.enabled: false

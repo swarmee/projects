@@ -2,7 +2,8 @@ server.name: swarmee-kibana
 server.host: "0"
 elasticsearch.url: http://elasticsearch:9200
 elasticsearch.requestTimeout: 60000
-server.basePath: /kibana
+#server.basePath: /kibana
+xpack.security.enabled: false
 #vega_enableexter      VEGA_ENABLEEXTERNALURLS: "true" 
 #logging.quiet: true
 #logging.dest: /var/log/kibana/kibana.log

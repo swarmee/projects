@@ -3,7 +3,7 @@ services:
   elasticsearch:
     build: ./my-elasticsearch
 #    container_name: elasticsearch - if you name containers you can't scale them
-    mem_limit: 3000m
+    mem_limit: 2800m
     ulimits:
       memlock:
         soft: -1
@@ -15,12 +15,15 @@ services:
  
   kibana:
     build: ./my-kibana
-    mem_limit: 600m
+    mem_limit: 800m
     networks:
       - esnet
     restart: always
+    ports:
+      - 5601:5601
     depends_on: 
       - nginx
+      - elasticsearch
 
   nginx:
     restart: always
