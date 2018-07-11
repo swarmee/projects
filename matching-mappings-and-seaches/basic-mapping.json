@@ -1,0 +1,92 @@
+DELETE product-index
+
+PUT product-index
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "edge_ngram_number_analyser": {
+          "tokenizer": "edge_ngram_number_tokenizer"
+        },
+        "simple_number_analyser": {
+          "tokenizer": "simple_number_tokenizer"
+        },
+        "snowball_analyser": {
+          "type": "snowball",
+          "language": "English"
+        }
+      },
+      "tokenizer": {
+        "edge_ngram_number_tokenizer": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 10,
+          "token_chars": [
+            "digit"
+          ]
+        },
+        "simple_number_tokenizer": {
+          "type": "simple_pattern",
+          "pattern": "[0-9]{2,5}"
+        }
+      }
+    }
+  },
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "productName": {
+          "type": "text",
+          "analyzer": "snowball_analyser",
+          "copy_to": [
+            "productNumbersEdgeNgrams",
+            "productNumbersSimple"
+          ]
+        },
+        "productNumbersEdgeNgrams": {
+          "type": "text",
+          "analyzer": "edge_ngram_number_analyser"
+        },
+        "productNumbersSimple": {
+          "type": "text",
+          "analyzer": "simple_number_analyser"
+        }
+      }
+    }
+  }
+}
+
+PUT product-index/_doc/1
+{ "productName" : "ACIDO ACETILSALICILICO PH.EU100" }
+
+PUT product-index/_doc/2
+{ "productName" : "Acido AcetilSalicilico Vitamina C Mylan EU 100" }
+
+GET product-index/_analyze
+{
+  "field" : "productName",
+  "text" : "Acido AcetilSalicilico Vitamina C Mylan EU 100"
+}
+
+GET product-index/_refresh
+
+GET /product-index/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "productName": "Acido AcetilSalicilico Vitamina C Mylan EU 100"
+          }
+        },
+        {
+          "match": {
+            "productNumbersEdgeNgrams": "AcetilSalicilico Vitamina 10000"
+          }
+        }
+      ]
+    }
+  }
+}
+
