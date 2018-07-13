@@ -2,52 +2,48 @@
 
 This docker-compose builds the elastic stack 5.4.2
 
-Uses self signed certificate and out of the box elastic passwords 
+Uses self signed certificate (so you need to click through the warning) and the following username and password
 
-username: elastic
-password: changeme
+username: test
+password: test
 
 To change the username and password
 
-####First ensure that you have apache-utils installed
+## First ensure that you have apache-utils installed
 
-sudo apt-get install apache2-utils
+```sudo apt-get install apache2-utils```
 
-#### run the below command in the ./my-nginx directory
+## run the below command in the ./my-nginx directory
 
-htpasswd -c ./app.htpasswd <newusername>
-
+```htpasswd -c ./app.htpasswd <newusername>```
 
 This stack assumes that you have got docker and docker-compose installed.
 
-Basical steps to get docker and docker-compose installed
+## Basical steps to install docker
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+```curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -```
 
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+```sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"```
 
-sudo apt-get update
+```sudo apt-get update```
 
-sudo apt-get install -y docker-ce
+```sudo apt-get install -y docker-ce```
+
+## Basic Steps to Install docker-compose
 
 sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 
 sudo chmod +x /usr/local/bin/docker-compose
 
-##NOTE host needs to have the following set or elasticsearch will not boot
-sysctl -w vm.max_map_count=262144
-
-##TO run
-
-Clone the repo and then run docker-compose up
-
-Elasticsearch will be running here --> 
-https://localhost/
-
-Kibana will be running here -->
-https://localhost/kibana
+## Map Count
+Elastic will not boot up with out a increased max_map_count even in containers - so need to run the below on your host machine --> 
+```sysctl -w vm.max_map_count=262144```
 
 
-sudo apt-get install apache2-utils 
-htpasswd -c ./app.htpasswd test
+## Once Booted
 
+Go here for Kibana access--> 
+https://<localhost>/
+
+Go here for direct elasticseach access--> 
+https://<localhost>/search/
