@@ -4,6 +4,8 @@ services:
     build: ./my-elasticsearch
 #    container_name: elasticsearch - if you name containers you can't scale them
     mem_limit: 2800m
+    ports:
+      - 9200:9200
     ulimits:
       memlock:
         soft: -1
