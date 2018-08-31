@@ -1,0 +1,59 @@
+version: '2.1'
+services:
+  elasticsearch:
+    build: ./my-elasticsearch
+#    container_name: elasticsearch - if you name containers you can't scale them
+    mem_limit: 800m
+    ports:
+      - 9200:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    networks:
+      - esnet
+ 
+  kibana:
+    build: ./my-kibana
+    mem_limit: 800m
+    networks:
+      - esnet
+    restart: always
+    depends_on: 
+      - nginx
+      - elasticsearch
+
+  nginx:
+    restart: always
+    build: ./my-nginx
+    mem_limit: 200m 
+    ports:
+      - 443:443      
+    volumes:
+      - nginxdata:/var/log/nginx/
+    networks:
+      - esnet
+    depends_on: 
+      - elasticsearch
+
+  load-sample-data:
+    container_name: load-sample-data
+    build: ./load-sample-data
+    mem_limit: 200m  
+#volumes: ['./my-alpine/configure-stack.sh:/usr/local/bin/configure-stack.sh:ro']
+    command: ['/bin/bash', '-c', 'cat /tmp/sample/load-sample-data.sh | tr -d "\r" | bash']
+    networks: 
+      - esnet
+    depends_on: 
+      - elasticsearch
+
+volumes:
+  esdata1:
+    driver: local
+  nginxdata:
+    driver: local  
+
+networks:
+  esnet:

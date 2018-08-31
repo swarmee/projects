@@ -1,0 +1,32 @@
+FROM alpine:3.6
+
+# install wget and unzip
+RUN apk update && apk add bash curl && rm -rf /var/cache/apk/*
+
+# create data directory
+RUN mkdir -p /tmp/sample/
+
+# Move the config into the container
+COPY ./real-estate-sales.mapping.json /tmp/sample/real-estate-sales.mapping.json
+
+# Move the data into the container
+COPY ./real-estate-sales.sample.data.json /tmp/sample/real-estate-sales.sample.data.json
+
+# Move the script into the container
+COPY ./load-sample-data.sh /tmp/sample/load-sample-data.sh
+
+# give everybody access
+RUN chmod -R 777 /tmp/sample/*
+
+# Download data
+#RUN wget -c --output-document=/tmp/geonames/data/cities1000.zip   "http://download.geonames.org/export/dump/cities1000.zip" && unzip /tmp/geonames/data/cities1000.zip -d /tmp/geonames/data/ && chmod -R 777 /tmp/geonames/*
+
+# unzip data - why this does work I don't understand
+#RUN unzip /tmp/geonames/data/cities1000.zip -d /tmp/geonames/data/
+
+# give everybody access
+#RUN chmod -R 777 /tmp/geonames/*
+
+# use this to keep a temporary container alive for trouble shooting
+#ENTRYPOINT ["tail", "-f", "/dev/null"]
+#ENTRYPOINT ["/usr/bin/curl"]
