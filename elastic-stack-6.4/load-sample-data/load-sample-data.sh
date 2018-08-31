@@ -20,6 +20,6 @@ curl -H 'Content-Type: application/json' -XPUT 'http://elasticsearch:9200/real-e
 echo 'Mapping all loaded up'
 
 # load data
-curl -H 'Content-Type: application/x-ndjson' -XPOST 'http://elasticsearch:9200/real-estate-sales/sales/_bulk?pretty' --data-binary @/tmp/sample/real-estate-sales.sample.data.json
+curl -s -H 'Content-Type: application/x-ndjson' -XPOST 'http://elasticsearch:9200/real-estate-sales/sales/_bulk?pretty' --data-binary @/tmp/sample/real-estate-sales.sample.data.json
 
 echo 'Data all loaded up'

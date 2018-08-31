@@ -1,0 +1,4 @@
+flask-restplus>=0.10.1
+Werkzeug>=0.14.1
+gunicorn>=19.7.1
+requests>=2.19.1

@@ -4,6 +4,7 @@ elasticsearch.url: http://elasticsearch:9200
 elasticsearch.requestTimeout: 60000
 #server.basePath: "/es"
 server.basePath: /kibana
+server.rewriteBasePath : false
 #xpack.security.enabled: false
 #vega_enableexter      VEGA_ENABLEEXTERNALURLS: "true" 
 #logging.quiet: true
