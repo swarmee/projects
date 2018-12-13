@@ -1,0 +1,27 @@
+version: '2.0'
+services:
+  country-api:
+    restart: always
+    build: ./my-api
+    command: gunicorn --workers=1 -b :8080 python-app:app 
+    networks:
+      - country
+
+  country-nginx:
+    build: ./my-nginx
+    environment:
+      CERTBOT_EMAIL: "john@swarmee.net"
+    ports:
+      - "80:80"
+      - "443:443"
+#    volumes:
+#      - ./logs/nginx:/var/log/nginx/
+#      - ./security/certificate.crt:/etc/nginx/ssl/certificate.crt
+#      - ./security/certificate.key:/etc/nginx/ssl/certificate.key
+#      - ./security/app.htpasswd:/etc/nginx/conf.d/app.htpasswd
+#      - ./security/kibana.htpasswd:/etc/nginx/conf.d/kibana.htpasswd
+    networks:
+      - country
+
+networks:
+  country:
