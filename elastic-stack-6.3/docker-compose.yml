@@ -13,14 +13,14 @@ services:
       - bootstrap.memory_lock=true
       - node.master=true
 #      - xpack.security.enabled=false 
-      - "ES_JAVA_OPTS=-Xms500m -Xmx500m"
+      - "ES_JAVA_OPTS=-Xms800m -Xmx800m"
     ports:
       - 9200:9200
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    mem_limit: 800m
+    mem_limit: 1800m
     volumes:
       - esdata1:/usr/share/elasticsearch/data
     networks:
